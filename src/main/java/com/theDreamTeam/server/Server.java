@@ -216,7 +216,7 @@ public class Server extends AbstractServer {
                 boolean ans = App.database.extraTimeRequest((Pair<ExtendTimeRequest, String>) message.getObject(), (Teacher) client.getInfo("user"));
                 Message message9 = new Message(Message.extraTimeRequestFromTeacher, ans);
                 try {
-                    client.sendToClient(message);
+                    client.sendToClient(message9);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

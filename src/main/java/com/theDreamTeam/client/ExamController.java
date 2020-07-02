@@ -140,7 +140,7 @@ public class ExamController {
 
     public void checkExam(String choiceBoxSelection, String duration,
                           String notesForTeacher, String notesForStudent) {
-        if (choiceBoxSelection.equals("Regular")) {
+        if (choiceBoxSelection.equals("regular")) {
             boolean isValid = true;
             int grade = 0;
             if (duration.equals(""))

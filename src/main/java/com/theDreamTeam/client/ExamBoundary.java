@@ -344,8 +344,8 @@ public class ExamBoundary {
         Text notesForStudentHint = new Text("Notes For Student: ");
 
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Regular", "Document");
-        choiceBox.setValue("Regular");
+        choiceBox.getItems().addAll("regular", "document");
+        choiceBox.setValue("regular");
         Text typeHint = new Text("Type: ");
 
         VBox attributes = new VBox(20);
@@ -363,10 +363,10 @@ public class ExamBoundary {
         HBox typeHbox = new HBox(10);
         typeHbox.getChildren().addAll(typeHint, choiceBox, btn);
         choiceBox.getSelectionModel().selectedItemProperty().addListener( (item, oldValue, newValue) -> {
-            if (newValue.equals("Regular")) {
+            if (newValue.equals("regular")) {
                 btn.setText("Add questions");
                 btn.setOnAction(e -> questionBoundary.selectQuestionsForNewExam());
-            } else if (newValue.equals("Document")) {
+            } else if (newValue.equals("document")) {
                 btn.setText("Add Document");
                 btn.setOnAction(e -> document = examController.uploadDocument());
             }
@@ -593,7 +593,7 @@ public class ExamBoundary {
         Text notesForStudentHint = new Text("Notes For Student: ");
 
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("regular", "rocument");
+        choiceBox.getItems().addAll("regular", "document");
         choiceBox.setValue("regular");
 
         VBox attributes = new VBox(20);
