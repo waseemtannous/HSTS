@@ -1,5 +1,6 @@
 package com.theDreamTeam.server;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import com.theDreamTeam.ocsf.server.*;
 import com.theDreamTeam.entities.*;
 import javafx.util.Pair;
@@ -83,7 +84,20 @@ public class Server extends AbstractServer {
                 break;
 
             case Message.saveExecutableExam: // The teacher starts the exam
-                App.database.saveExecutableExam((ExecutableExam) message.getObject());
+                ExecutableExam exam1 = (ExecutableExam) message.getObject();
+                boolean success = App.database.saveExecutableExam(exam1);
+                int courseId = exam1.getType().equals("regular") ? exam1.getRegularExam().getCourse().getId() : exam1.getDocumentExam().getCourse().getId();
+                try{
+                    if (success){
+                        Message msg1 = new Message(Message.receiveExamsDrawer, App.database.getExamsByCourseId(courseId));
+                        client.sendToClient(msg1);
+                    } else {
+                        Message msg1 = new Message(Message.wrongCode);
+                        client.sendToClient(msg1);
+                    }
+                } catch (IOException e2) {
+                    e2.printStackTrace();
+                }
                 break;
 
             case Message.saveExamCopy: // Checks the exam and sends it to the teacher
@@ -106,12 +120,16 @@ public class Server extends AbstractServer {
                 Student student = (Student) client.getInfo("user");
                 if (execExam != null) {
                     String type = execExam.getType();
-                    for (Course course : student.getCourses())
+                    System.out.println("before student courses");
+                    System.out.println(student.getCourses().size());
+                    for (Course course : student.getCourses()) {
+                        System.out.println("student courses");
                         if (type.equals("regular")) {
                             if (course.getId() == execExam.getRegularExam().getCourse().getId()) {
                                 try {
                                     System.out.println("send regular exam");
                                     client.sendToClient(new Message(Message.receiveExamByCode, execExam));
+                                    System.out.println("exam sent");
                                     DataBase.session.getTransaction().commit();
                                     DataBase.session.close();
                                     return;
@@ -130,6 +148,7 @@ public class Server extends AbstractServer {
                                 e.printStackTrace();
                             }
                         }
+                    }
                 } else {
                     try {
                         System.out.println("invalid code");
@@ -224,10 +243,13 @@ public class Server extends AbstractServer {
 
             case Message.sendExtraTime:
                 // NEED TO CHECK WHAT THE MANAGER RESPONDED
-                if (((ExtendTimeRequest) message.getObject()).isAnswer()) {
-                    sendToAllClients(new Message(Message.extraTime, (ExtendTimeRequest) message.getObject()));
-                    App.database.deleteTimeRequest((ExtendTimeRequest) message.getObject());
+                ExtendTimeRequest request = (ExtendTimeRequest) message.getObject();
+                if (request.isAnswer()) {
+                    request.setExecutableExam(DataBase.session.get(ExecutableExam.class, request.getExecutableExam().getId()));
+                    sendToAllClients(new Message(Message.extraTime, request));
                 }
+                App.database.deleteTimeRequest((ExtendTimeRequest) message.getObject());
+                System.out.println("request deleted");
 
                 break;
 
@@ -462,11 +484,15 @@ public class Server extends AbstractServer {
         for (Answer answer : copy.getAnswers()) {
             System.out.println("for");
             if (answer.getAnswer().equals(answer.getQuestion().getCorrectAns())) {
+                System.out.println("answer :    " + answer.getAnswer());
+                System.out.println("correct ans:      " + answer.getQuestion().getCorrectAns());
                 grade += answer.getQuestion().getGrade();
                 answer.setPoints(answer.getQuestion().getGrade());
-            } else
+            } else {
                 answer.setPoints(0);
+            }
         }
+        System.out.println("grade       " + grade);
         copy.setGrade(grade);
 		App.database.addExamCopy(copy); // SENDS THE EXAM TO THE TEACHER
     }

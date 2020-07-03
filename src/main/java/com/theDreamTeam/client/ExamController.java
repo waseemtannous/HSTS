@@ -124,10 +124,10 @@ public class ExamController {
     }
 
     public void extendTime(ExtendTimeRequest extendTimeRequest) {
-        if ((extendTimeRequest.getExecutableExam().getId() == executableExam.getId()) && inExam) {
+        if (inExam && (extendTimeRequest.getExecutableExam().getId() == executableExam.getId())) {
             examTime += extendTimeRequest.getAddedTime();
             long curTimeInMs = ExamBoundary.end.getTime();
-            ExamBoundary.end = new Date(curTimeInMs + (long)(ExamController.examTime * 60000));
+            ExamBoundary.end = new Date(curTimeInMs + (long)(extendTimeRequest.getAddedTime() * 60000));
             SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
             ExamBoundary.endTime.setText("Finish Time: " + formatter.format(ExamBoundary.end));
             ActivityMain.errorHandle("Time Extended.");

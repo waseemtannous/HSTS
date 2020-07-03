@@ -36,7 +36,7 @@ public class DataBase { // class that has all database related functions for eas
 
 	public static SessionFactory sessionFactory;
 
-	String url = "jdbc:mysql://localhost/filler";
+	String url = "jdbc:mysql://localhost/hsts";
 	String username = "root";
 	String password = "wTannous123";
 
@@ -72,7 +72,7 @@ public class DataBase { // class that has all database related functions for eas
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 
-			initializeData();
+//			initializeData();
 
 		} catch (Exception exception) {
 			if (session != null) {
@@ -180,10 +180,30 @@ public class DataBase { // class that has all database related functions for eas
 		session.save(exam);
 	}
 
-	public void saveExecutableExam(ExecutableExam exam) {
+	public boolean saveExecutableExam(ExecutableExam exam) {
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<ExecutableExam> query = builder.createQuery(ExecutableExam.class);
+		query.from(ExecutableExam.class);
+		System.out.println("exec exam code 1");
+		List<ExecutableExam> executableExams = session.createQuery(query).getResultList();
+		for (ExecutableExam executableExam : executableExams) {
+			if (executableExam.getCode().equals(exam.getCode())) {
+				return false;
+			}
+		}
+		if (exam.getType().equals("regular"))
+			exam.setRegularExam(session.get(RegularExam.class, exam.getRegularExam().getId()));
+		else
+			exam.setDocumentExam(session.get(DocumentExam.class, exam.getDocumentExam().getId()));
+		System.out.println("exec exam code 2");
+		exam.setExecTeacher(session.get(Teacher.class, exam.getExecTeacher().getId()));
+		System.out.println("exec exam code 3");
 		session.save(exam);
+		System.out.println("exec exam code 4");
 		Statistics stats = new Statistics(exam);
+		System.out.println("exec exam code 5");
 		session.save(stats);
+		return true;
 	}
 
 	public synchronized void deleteQuestionById(int id) {
@@ -385,7 +405,20 @@ public class DataBase { // class that has all database related functions for eas
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		CriteriaQuery<ExtendTimeRequest> query = builder.createQuery(ExtendTimeRequest.class);
 		query.from(ExtendTimeRequest.class);
-		return session.createQuery(query).getResultList();
+		List<ExtendTimeRequest> requests = session.createQuery(query).getResultList();
+		for (ExtendTimeRequest request : requests) {
+			ExecutableExam executableExam = session.get(ExecutableExam.class, request.getExecutableExam().getId());
+			Teacher teacher = session.get(Teacher.class, executableExam.getExecTeacher().getId());
+			executableExam.setExecTeacher(teacher);
+			if (executableExam.getType().equals("regular"))
+				executableExam.setRegularExam(session.get(RegularExam.class, executableExam.getRegularExam().getId()));
+			else
+				executableExam.setDocumentExam(session.get(DocumentExam.class, executableExam.getDocumentExam().getId()));
+
+			executableExam.getExam().setCourse(session.get(Course.class, executableExam.getExam().getCourse().getId()));
+			request.setExecutableExam(executableExam);
+		}
+		return requests;
 
 	}
 
@@ -489,9 +522,25 @@ public class DataBase { // class that has all database related functions for eas
 		CriteriaQuery<ExecutableExam> query = builder.createQuery(ExecutableExam.class);
 		query.from(ExecutableExam.class);
 		List<ExecutableExam> exams = session.createQuery(query).getResultList();
+		System.out.println("pubg iphone 1");
 		for (ExecutableExam exam : exams) {
-			if (exam.getCode().equals(ExamCode))
+			if (exam.getCode().equals(ExamCode)) {
+				if (exam.getType().equals("regular")) {
+					RegularExam reg = session.get(RegularExam.class, exam.getRegularExam().getId());
+					List<GradedQuestion> questions = new ArrayList<>();
+					for (GradedQuestion gradedQuestion : reg.getGradedQuestions()) {
+						questions.add(session.get(GradedQuestion.class, gradedQuestion.getId()));
+					}
+					reg.setGradedQuestions(questions);
+					exam.setRegularExam(reg);
+				}
+				else {
+
+					exam.setDocumentExam(session.get(DocumentExam.class, exam.getDocumentExam().getId()));
+				}
+				System.out.println("pubg iphone 2s");
 				return exam;
+			}
 		}
 		return null;
 	}
@@ -507,6 +556,11 @@ public class DataBase { // class that has all database related functions for eas
 		List<Student> students = session.createQuery(query1).getResultList();
 		for (Student temp : students){
 			if (temp.getUsername().equals(user.getUsername()) && temp.getPassword().equals(SHA256(user.getPassword()))) {
+				List<Course> courses = new ArrayList<>();
+				for (Course course : temp.getCourses()) {
+					courses.add(session.get(Course.class, course.getId()));
+				}
+				temp.setCourses(courses);
 				return temp;
 			}
 		}
@@ -565,19 +619,15 @@ public class DataBase { // class that has all database related functions for eas
 	}
 
 	public void deleteTimeRequest(ExtendTimeRequest time) {
-		CriteriaBuilder builder = session.getCriteriaBuilder();
-		CriteriaQuery<User> query = builder.createQuery(User.class);
-		query.from(User.class);
-		List<User> users = session.createQuery(query).getResultList();
-		User user = null;
-
-		for (User user1 : users) {
-			if ((user1 instanceof Manager))
-				user = user1;
+		try (Connection connection = DriverManager.getConnection(url, username, password)) {
+			String sql = "DELETE FROM extendtimerequest WHERE id = ?";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, ((Integer) time.getId()).toString());
+			int rows = statement.executeUpdate();
+			System.out.println(rows + " record(s) deleted.");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		((Manager) user).getExtendTimeRequests().add(time);
-		session.update(user);
 	}
 
 	public List<Exam> getExamsByCourseId(int id) {

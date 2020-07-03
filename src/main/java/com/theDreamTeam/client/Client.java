@@ -158,6 +158,12 @@ public class Client extends AbstractClient {
                     else
                         ActivityMain.errorHandle("Invalid Request");
                 });
+                break;
+
+            case Message.wrongCode :
+                System.out.println("wrongCode");
+                Platform.runLater(() -> ActivityMain.errorHandle("Code Already Exists"));
+                break;
 
         }
     }

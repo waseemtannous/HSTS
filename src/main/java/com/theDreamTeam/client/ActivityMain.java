@@ -90,11 +90,11 @@ public class ActivityMain {
         App.mainScreen.setCenter(welcome);
 
         App.scene = new Scene(App.mainScreen, App.hSize, App.vSize );
-        try {
-            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
-        } catch (MalformedURLException e) {
-            errorHandle("An Error Has Occurred");
-        }
+//        try {
+//            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
+//        } catch (MalformedURLException e) {
+//            errorHandle("An Error Has Occurred");
+//        }
         App.stage.setScene(App.scene);
         App.stage.show();
     }

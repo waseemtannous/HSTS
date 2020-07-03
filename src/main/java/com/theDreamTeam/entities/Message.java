@@ -119,6 +119,8 @@ public class Message implements Serializable {
 
     public static final int extraTimeRequestFromTeacher = 56;
 
+    public static final int wrongCode = 57;
+
     private final int msg;
 
     private Object object;
