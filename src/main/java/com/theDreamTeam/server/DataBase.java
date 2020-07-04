@@ -2,7 +2,6 @@ package com.theDreamTeam.server;
 
 
 import com.theDreamTeam.entities.*;
-
 import javafx.util.Pair;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -15,10 +14,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.print.Doc;
-import javax.swing.plaf.IconUIResource;
-import java.io.File;
-import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;

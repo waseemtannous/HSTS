@@ -222,26 +222,32 @@ public class ExamBoundary {
                 Text cours = new Text("Course: " + exam.getCourse().getName());
                 Button showbtn = new Button("Show");
                 showbtn.setOnAction(e -> showExamInDrawer((RegularExam) exam));
-                Button executeExam = new Button("Execute Exam");
-                executeExam.setOnAction(e -> {
-                    ExamBoundary.executeExam = exam;
-                    executeExam(ExamBoundary.executeExam);
-                });
-                hbox.getChildren().addAll(examId, teacherId, cours, showbtn, executeExam);
+                hbox.getChildren().addAll(examId, teacherId, cours, showbtn);
+                if (App.user instanceof Teacher) {
+                    Button executeExam = new Button("Execute Exam");
+                    executeExam.setOnAction(e -> {
+                        ExamBoundary.executeExam = exam;
+                        executeExam(ExamBoundary.executeExam);
+                    });
+                    hbox.getChildren().add(executeExam);
+                }
             } else {
                 Text examId = new Text("Exam id: " + exam.getId());
                 Text teacherId = new Text("Teacher: " + exam.getTeacher().getId());
                 Text cours = new Text("Course: " + exam.getCourse().getName());
-                Button executeExam = new Button("Execute Exam");
-                executeExam.setOnAction(e -> {
-                    ExamBoundary.executeExam = exam;
-                    executeExam(ExamBoundary.executeExam);
-                });
                 Button downloadbtn = new Button("Download");
                 downloadbtn.setOnAction(e -> examController.downloadExam(((DocumentExam) exam).getFile()));
-                Button editbtn = new Button("Edit");
-                editbtn.setOnAction(e -> editDocumentExam((DocumentExam) exam));
-                hbox.getChildren().addAll(examId, teacherId, cours, downloadbtn, editbtn, executeExam);
+                hbox.getChildren().addAll(examId, teacherId, cours, downloadbtn);
+                if (App.user instanceof Teacher) {
+                    Button editbtn = new Button("Edit");
+                    editbtn.setOnAction(e -> editDocumentExam((DocumentExam) exam));
+                    Button executeExam = new Button("Execute Exam");
+                    executeExam.setOnAction(e -> {
+                        ExamBoundary.executeExam = exam;
+                        executeExam(ExamBoundary.executeExam);
+                    });
+                    hbox.getChildren().addAll(editbtn, executeExam);
+                }
             }
             vbox.getChildren().add(hbox);
         }
@@ -528,7 +534,6 @@ public class ExamBoundary {
     }
 
     public void executeExam(Exam exam) {
-        ProgressIndicator pi = new ProgressIndicator(-1f);
         VBox vbox = new VBox(20);
         Button btn = new Button("Execute");
         btn.setDisable(true);
@@ -546,11 +551,9 @@ public class ExamBoundary {
         vbox.getChildren().addAll(code, btn);
         btn.setOnAction(e -> {
             if (exam instanceof RegularExam){
-                vbox.getChildren().add(pi);
                 examController.saveExecutableExam(new ExecutableExam(code.getText(), (RegularExam) exam, (Teacher) App.user));
             }
             if (exam instanceof DocumentExam){
-                vbox.getChildren().add(pi);
                 examController.saveExecutableExam(new ExecutableExam(code.getText(), (DocumentExam) exam, (Teacher) App.user));
             }
         });
@@ -736,9 +739,9 @@ public class ExamBoundary {
             for (Answer answer : exam.getAnswers()) {
                 Text title = new Text(answer.getQuestion().getTitle());
                 Text ansA = new Text("A.  " + answer.getQuestion().getAnswerA());
-                Text ansB = new Text("B.  " + answer.getQuestion().getAnswerA());
-                Text ansC = new Text("C.  " + answer.getQuestion().getAnswerA());
-                Text ansD = new Text("D.  " + answer.getQuestion().getAnswerA());
+                Text ansB = new Text("B.  " + answer.getQuestion().getAnswerB());
+                Text ansC = new Text("C.  " + answer.getQuestion().getAnswerC());
+                Text ansD = new Text("D.  " + answer.getQuestion().getAnswerD());
                 Text correctAns = new Text("Correct Answer: " + answer.getQuestion().getCorrectAns());
                 Text studentAns = new Text("Student Answer: " + answer.getAnswer());
 

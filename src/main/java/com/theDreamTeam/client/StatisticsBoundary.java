@@ -93,7 +93,7 @@ public class StatisticsBoundary {
         VBox layout = new VBox(10);
         HBox rawad = new HBox(10);
         NumberAxis grade = new NumberAxis();
-        grade.setLabel("Grade");
+        grade.setLabel("Number Of Students");
         CategoryAxis range = new CategoryAxis();
         range.setLabel("Range");
         BorderPane bord = new BorderPane();
