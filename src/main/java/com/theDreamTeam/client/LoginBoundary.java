@@ -36,7 +36,7 @@ public class LoginBoundary {
 
         String imgUrl = null;
         try {
-            imgUrl = (new File("logo2.png")).toURI().toURL().toExternalForm();
+            imgUrl = (new File(System.getProperty("user.dir") + "/logo2.png")).toURI().toURL().toExternalForm();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -76,7 +76,7 @@ public class LoginBoundary {
         vbox.getChildren().addAll(logo, username, password, loginBtn, invalidText);
         Scene scene = new Scene(vbox, 600,300);
         try {
-            scene.getStylesheets().add((new File("stylesheet.css")).toURI().toURL().toExternalForm());
+            scene.getStylesheets().add((new File(System.getProperty("user.dir") + "/stylesheet.css")).toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             ActivityMain.errorHandle("An Error Has Occurred");
         }

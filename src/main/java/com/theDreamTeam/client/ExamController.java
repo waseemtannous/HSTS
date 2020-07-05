@@ -215,16 +215,11 @@ public class ExamController {
             }
 //
             if (isValid) {
-                System.out.println("is valid exam check1");
                 Exam exam = new Exam(notesForTeacher, notesForStudent, (Teacher) App.user, ExamBoundary.selectedCourse,
                         Integer.parseInt(duration), grade);
-                System.out.println("is valid exam check2");
                 newRegularExam = new RegularExam(exam, questionsForNewExam);
-                System.out.println("is valid exam check3");
                 Message message = new Message(Query.saveNewRegularExam, newRegularExam);
-                System.out.println("is valid exam check4");
                 App.client.sendMessageToServer(message);
-                System.out.println("is valid exam check5");
             } else {
                 ActivityMain.errorHandle("Invalid Exam.");
             }
@@ -239,9 +234,7 @@ public class ExamController {
                         Integer.parseInt(duration), 100);
                 newDocumentExam = new DocumentExam(exam, ExamBoundary.document);
                 Message message = new Message(Query.saveNewDocumentExam, newDocumentExam);
-                System.out.println("is valid exam check4");
                 App.client.sendMessageToServer(message);
-                System.out.println("is valid exam check5");
             }
         }
     }

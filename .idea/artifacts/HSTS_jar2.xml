@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="HSTS:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/HSTS_jar</output-path>
+  <artifact type="jar" name="HSTS:jar2">
+    <output-path>$PROJECT_DIR$/out/artifacts/HSTS_jar2</output-path>
     <root id="archive" name="HSTS.jar">
       <element id="module-output" name="HSTS" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/hibernate/common/hibernate-commons-annotations/5.1.0.Final/hibernate-commons-annotations-5.1.0.Final.jar" path-in-jar="/" />

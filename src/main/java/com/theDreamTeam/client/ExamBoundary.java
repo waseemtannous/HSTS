@@ -96,11 +96,8 @@ public class ExamBoundary {
             ScrollPane scrollPane = new ScrollPane();
             VBox questions = new VBox(25);
 
-            System.out.println("waseem123");
             for (Answer answer : pair.getValue()) {
-                System.out.println("waseem69");
                 questions.getChildren().add(questionBoundary.showQuestionInExamCopy(answer));
-                System.out.println("waseem696969");
             }
             scrollPane.setContent(questions);
             vbox.getChildren().add(scrollPane);
@@ -174,7 +171,6 @@ public class ExamBoundary {
                 if (tempCourse.getName().equals(choiceBox.getSelectionModel().getSelectedItem()))
                     selectedCourse = tempCourse;
             }
-            System.out.println("exams drawer search btn");
             Message message = new Message(Query.getExamsDrawer, selectedCourse.getId());
             App.client.sendMessageToServer(message);
             newExambtn.setDisable(false);
@@ -641,7 +637,6 @@ public class ExamBoundary {
 
     public void receiveExamsToCheck(List<ExamCopy> exams) {
         VBox vbox = new VBox(20);
-        System.out.println(exams.size());
         for (ExamCopy exam : exams) {
             Text examId = new Text("Exam Id: " + exam.getId());
             Text student = new Text("Student: " + exam.getStudent().getId());

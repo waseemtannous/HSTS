@@ -93,7 +93,7 @@ public class ActivityMain {
 
         App.scene = new Scene(App.mainScreen, App.hSize, App.vSize );
         try {
-            App.scene.getStylesheets().add((new File("stylesheet.css")).toURI().toURL().toExternalForm());
+            App.scene.getStylesheets().add((new File(System.getProperty("user.dir") + "/stylesheet.css")).toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             errorHandle("An Error Has Occurred");
         }
@@ -141,7 +141,7 @@ public class ActivityMain {
 
         App.scene = new Scene(App.mainScreen, App.hSize, App.vSize );
         try {
-            App.scene.getStylesheets().add((new File("stylesheet.css")).toURI().toURL().toExternalForm());
+            App.scene.getStylesheets().add((new File(System.getProperty("user.dir") + "/stylesheet.css")).toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             errorHandle("An Error Has Occurred");
         }
@@ -190,7 +190,7 @@ public class ActivityMain {
 
         App.scene = new Scene(App.mainScreen, App.hSize, App.vSize );
         try {
-            App.scene.getStylesheets().add((new File("stylesheet.css")).toURI().toURL().toExternalForm());
+            App.scene.getStylesheets().add((new File(System.getProperty("user.dir") + "/stylesheet.css")).toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             errorHandle("An Error Has Occurred");
         }
@@ -208,7 +208,7 @@ public class ActivityMain {
         mainScreenBtn.setMaxHeight(MAX_VALUE);
         String imgUrl = null;
         try {
-            imgUrl = (new File("logo2.png")).toURI().toURL().toExternalForm();
+            imgUrl = (new File(System.getProperty("user.dir") + "/logo2.png")).toURI().toURL().toExternalForm();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
