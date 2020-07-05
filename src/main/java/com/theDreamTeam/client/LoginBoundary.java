@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -33,11 +34,17 @@ public class LoginBoundary {
         VBox vbox = new VBox(20);
         vbox.setAlignment(Pos.CENTER);
 
-//        String imgUrl = System.getProperty("user.dir") + "/logo1.png";
-//        ImageView logo = new ImageView(imgUrl);
-//        logo.setPreserveRatio(true);
-//        logo.setFitHeight(100);
-//        logo.setFitWidth(100);
+        String imgUrl = null;
+        try {
+            imgUrl = (new File("logo2.png")).toURI().toURL().toExternalForm();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        assert imgUrl != null;
+        ImageView logo = new ImageView(imgUrl);
+        logo.setPreserveRatio(true);
+        logo.setFitHeight(100);
+        logo.setFitWidth(100);
 
         Button loginBtn = new Button();
 
@@ -66,10 +73,10 @@ public class LoginBoundary {
 
         invalidText.setText("");
 
-        vbox.getChildren().addAll(username, password, loginBtn, invalidText);
+        vbox.getChildren().addAll(logo, username, password, loginBtn, invalidText);
         Scene scene = new Scene(vbox, 600,300);
         try {
-            scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
+            scene.getStylesheets().add((new File("stylesheet.css")).toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             ActivityMain.errorHandle("An Error Has Occurred");
         }

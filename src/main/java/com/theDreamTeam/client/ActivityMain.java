@@ -7,9 +7,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -82,6 +84,7 @@ public class ActivityMain {
         sideBar.setAlignment(Pos.CENTER);
         sideBar.getStyleClass().add("mainMenuBar");
 
+        welcome.setFont(new Font(70));
         welcome.setText(studentGreeting);
 
         App.mainScreen.setTop(topBar);
@@ -90,7 +93,7 @@ public class ActivityMain {
 
         App.scene = new Scene(App.mainScreen, App.hSize, App.vSize );
         try {
-            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
+            App.scene.getStylesheets().add((new File("stylesheet.css")).toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             errorHandle("An Error Has Occurred");
         }
@@ -129,6 +132,7 @@ public class ActivityMain {
         sideBar.setAlignment(Pos.CENTER);
         sideBar.getStyleClass().add("mainMenuBar");
 
+        welcome.setFont(new Font(70));
         welcome.setText(teacherGreeting);
 
         App.mainScreen.setTop(topBar);
@@ -137,7 +141,7 @@ public class ActivityMain {
 
         App.scene = new Scene(App.mainScreen, App.hSize, App.vSize );
         try {
-            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
+            App.scene.getStylesheets().add((new File("stylesheet.css")).toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             errorHandle("An Error Has Occurred");
         }
@@ -177,6 +181,7 @@ public class ActivityMain {
         sideBar.setAlignment(Pos.CENTER);
         sideBar.getStyleClass().add("mainMenuBar");
 
+        welcome.setFont(new Font(70));
         welcome.setText(managerGreeting);
 
         App.mainScreen.setTop(topBar);
@@ -185,7 +190,7 @@ public class ActivityMain {
 
         App.scene = new Scene(App.mainScreen, App.hSize, App.vSize );
         try {
-            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
+            App.scene.getStylesheets().add((new File("stylesheet.css")).toURI().toURL().toExternalForm());
         } catch (MalformedURLException e) {
             errorHandle("An Error Has Occurred");
         }
@@ -194,26 +199,30 @@ public class ActivityMain {
     }
 
     public HBox createTopBar() {
-        HBox topBar = new HBox(20);
+        HBox topBar = new HBox(610);
         Text greetingText = new Text("Hello " + App.user.getUsername());
+        greetingText.setFont(new Font(14));
+        greetingText.setFill(Color.WHITE);
         mainScreenBtn = new Button("Home");
         mainScreenBtn.setOnAction(e -> App.mainScreen.setCenter(welcome));
         mainScreenBtn.setMaxHeight(MAX_VALUE);
-//        String imgUrl = System.getProperty("user.dir") + "/src/main/resources/logo/logo1.png";
-//        ImageView logo = new ImageView(imgUrl);
-//        logo.setPreserveRatio(true);
-//        logo.setFitHeight(50);
-//        logo.setFitWidth(50);
+        String imgUrl = null;
+        try {
+            imgUrl = (new File("logo2.png")).toURI().toURL().toExternalForm();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        assert imgUrl != null;
+        ImageView logo = new ImageView(imgUrl);
+        logo.setPreserveRatio(true);
+        logo.setFitHeight(80);
+        logo.setFitWidth(80);
 
-        topBar.getChildren().addAll(greetingText, mainScreenBtn);
+        topBar.getChildren().addAll(logo, greetingText, mainScreenBtn);
         topBar.setAlignment(Pos.CENTER);
         topBar.getStyleClass().add("mainMenuBar");
         return topBar;
     }
-
-//    public static String getImageURL(String imageName) {
-//        return Navigation.class.getResource(imageName).toExternalForm();
-//    }
 
     public Button createLogoutButton() {
         logoutButton = new Button("Logout");

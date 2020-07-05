@@ -1,4 +1,3 @@
-
 .root{
 
     -fx-background-color: #ffffff;
@@ -16,7 +15,6 @@
 }
 
 .label{
-    /*-fx-text-fill :#2a9d8f;*/
     -fx-font-family: sans-serif;
     -fx-font-size: 18;
     -fx-font-weight: bold;
@@ -29,16 +27,11 @@
 
 .button{
     -fx-background-color: #6200ee;
-    /*-fx-background-radius: 30;*/
-    /*-fx-background-insets: 0,1,2,3,0;*/
     -fx-text-fill: #ffffff;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
     -fx-padding: 10 20 10 20;
 }
-
-
-
 
 .button:hover {
     -fx-background-color: #3700b3;
@@ -46,7 +39,6 @@
 
 #logoutButton{
     -fx-background-color: #FF0000;
-    /*-fx-background-radius: 30;*/
     -fx-background-insets: 0;
     -fx-text-fill: #ffffff;
 
@@ -58,5 +50,4 @@
     -fx-border-width: 2;
 }
 
-  
-    
+

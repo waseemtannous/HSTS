@@ -1,11 +1,14 @@
+com\theDreamTeam\entities\GradedQuestion.class
+com\theDreamTeam\client\ExamBoundary.class
+com\theDreamTeam\entities\Answer.class
+com\theDreamTeam\client\App.class
+com\theDreamTeam\entities\ExamCopy.class
 com\theDreamTeam\entities\RegularExam.class
 com\theDreamTeam\entities\DocumentExam.class
-com\theDreamTeam\entities\GradedQuestion.class
 com\theDreamTeam\entities\ExtendTimeRequest.class
 com\theDreamTeam\entities\Message.class
 com\theDreamTeam\entities\Manager.class
 com\theDreamTeam\client\ExamController.class
-com\theDreamTeam\client\ExamBoundary.class
 com\theDreamTeam\client\QuestionBoundary.class
 com\theDreamTeam\entities\Question.class
 com\theDreamTeam\client\LoginBoundary.class
@@ -16,8 +19,5 @@ com\theDreamTeam\client\LoginController.class
 com\theDreamTeam\entities\ExecutableExam.class
 com\theDreamTeam\entities\Course.class
 com\theDreamTeam\entities\User.class
-com\theDreamTeam\entities\Answer.class
 com\theDreamTeam\client\QuestionController.class
 com\theDreamTeam\client\ActivityMain.class
-com\theDreamTeam\client\App.class
-com\theDreamTeam\entities\ExamCopy.class
