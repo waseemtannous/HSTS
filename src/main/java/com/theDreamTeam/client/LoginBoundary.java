@@ -1,19 +1,20 @@
 package com.theDreamTeam.client;
 
-import com.theDreamTeam.entities.*;
-
+import com.theDreamTeam.entities.User;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.net.MalformedURLException;
 
 
 public class LoginBoundary {
@@ -28,13 +29,11 @@ public class LoginBoundary {
         stage = new Stage();
         stage.setTitle("HSTS - Login");
         stage.setResizable(false);
-        stage.setOnCloseRequest((e) -> {
-           App.closeApp();
-        });
+        stage.setOnCloseRequest((e) -> App.closeApp());
         VBox vbox = new VBox(20);
         vbox.setAlignment(Pos.CENTER);
 
-//        String imgUrl = ActivityMain.getImageURL("logo1.png");
+//        String imgUrl = System.getProperty("user.dir") + "/logo1.png";
 //        ImageView logo = new ImageView(imgUrl);
 //        logo.setPreserveRatio(true);
 //        logo.setFitHeight(100);
@@ -69,6 +68,11 @@ public class LoginBoundary {
 
         vbox.getChildren().addAll(username, password, loginBtn, invalidText);
         Scene scene = new Scene(vbox, 600,300);
+        try {
+            scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
+        } catch (MalformedURLException e) {
+            ActivityMain.errorHandle("An Error Has Occurred");
+        }
         stage.setScene(scene);
         stage.show();
     }

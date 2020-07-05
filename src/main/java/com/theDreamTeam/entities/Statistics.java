@@ -1,4 +1,5 @@
 package com.theDreamTeam.entities;
+
 import javax.persistence.*;
 import java.io.Serializable;
 

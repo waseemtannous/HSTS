@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class DocumentExam extends Exam implements Serializable {
 
     @Column(length = 100000000) // 100MB
-    private byte[] file;
+    private byte[] file = null;
 
     public DocumentExam() {
     }

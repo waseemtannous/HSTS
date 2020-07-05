@@ -1,8 +1,5 @@
 package com.theDreamTeam.entities;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,24 +47,13 @@ public class Student extends User implements Serializable {
 
     public void setExams(List<ExamCopy> exams) {
     	this.exams=exams;
-//    	for (ExamCopy exam : exams) {
-//    		exam.setStudent(this);
-//    	}
     }
-    /////////////////////////////////////////////////////////////////////////////////////
+
     public void addCourse(Course... courses) {
 		for (Course course : courses) {
 			this.courses.add(course);
 			course.getStudents().add(this); 
 		}
 	}
-//    
-//    public void addExamCopy(ExamCopy... exams) {
-//		for (ExamCopy exam : exams) {
-//			this.exams.add(exam);
-//			exam.setStudent(this); 
-//		}
-//	}
-   ////////////////////////////////////////////////////////////////////////////////////// 
     
 }

@@ -1,65 +1,13 @@
-//package com.theDreamTeam.client;
-//
-//import com.theDreamTeam.entities.*;
-//import javafx.application.Application;
-//import javafx.scene.Scene;
-//import javafx.scene.control.Button;
-//import javafx.scene.layout.VBox;
-//import javafx.stage.Stage;
-//
-//import java.io.IOException;
-//
-//public class App extends Application {
-//
-//    public static final Client client = new Client("localhost", 6666);
-//
-//    @Override
-//    public void start(Stage stage) throws Exception {
-//
-//        Button btn = new Button("send msg");
-//        btn.setOnAction(e -> {
-//            try {
-//                Message message = new Message(Message.logIn, new User("Waseem Tannous", "waseem69"));
-//                client.sendToServer(message);
-//            } catch (IOException ioException) {
-//                ioException.printStackTrace();
-//            }
-//        });
-//
-//        VBox vbox = new VBox();
-//        vbox.getChildren().add(btn);
-//
-//        Scene scene = new Scene(vbox, 200, 200);
-//        stage.setScene(scene);
-//        stage.show();
-//    }
-//
-//    public static void main(String[] args) {
-//        try {
-//            client.openConnection();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        launch(args);
-//    }
-//}
-
 package com.theDreamTeam.client;
 
-import com.theDreamTeam.entities.*;
-
+import com.theDreamTeam.entities.User;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class App extends Application {
@@ -74,8 +22,6 @@ public class App extends Application {
 
     public static BorderPane mainScreen;
 
-    public static Text logo = new Text();
-
     public static Client client;
 
     public static User user;
@@ -84,17 +30,7 @@ public class App extends Application {
 
     public static LoginBoundary loginBoundary = new LoginBoundary();
 
-    public static Teacher teacher;
-
-    public static Course course;
-
-    public static Exam exam;
-
-    public static ExtendTimeRequest extendTimeRequest;
-
     public static LoginController loginController = new LoginController();
-
-    public static List<ExamCopy> list = new ArrayList<>();
 
     @Override
     public void start(Stage stage) {

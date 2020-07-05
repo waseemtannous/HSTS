@@ -1,48 +1,37 @@
 
 .root{
 
--fx-background-image: url("wood69.jpg");
-    -fx-background-repeat: stretch;   
-    -fx-background-size: 1500 800;
-    -fx-background-position: center center;
-      -fx-base       : #E5F0FF;
-    -fx-effect: dropshadow(three-pass-box, black, 0, 0.5, 0, 0); 
-    
-    }
-    
-#vbox{
+    -fx-background-color: #ffffff;
+}
 
+#vbox{
+}
+
+.mainMenuBar {
+    -fx-background-color: #6200ee;
 }
 
 #scrolpane{
--fx-background-color: transparent;
-
+    -fx-background-color: transparent;
 }
 
 .label{
-
-    -fx-text-fill :#FFD600;
-	-fx-font-family: sans-serif;
-	  -fx-font-size: 18;
-	  -fx-font-weight: bold;
-		
+    /*-fx-text-fill :#2a9d8f;*/
+    -fx-font-family: sans-serif;
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
 }
 
 #welcome{
-	  -fx-font-size: 69;
+    -fx-font-size: 69;
 }
 
 
 .button{
-    -fx-background-color: 
-        linear-gradient(#ffd65b, #e68400),
-        linear-gradient(#ffef84, #f2ba44),
-        linear-gradient(#ffea6a, #efaa22),
-        linear-gradient(#ffe657 0%, #f8c202 50%, #eea10b 100%),
-        linear-gradient(from 0% 0% to 15% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0));
-    -fx-background-radius: 30;
-    -fx-background-insets: 0,1,2,3,0;
-    -fx-text-fill: #654b00;
+    -fx-background-color: #6200ee;
+    /*-fx-background-radius: 30;*/
+    /*-fx-background-insets: 0,1,2,3,0;*/
+    -fx-text-fill: #ffffff;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
     -fx-padding: 10 20 10 20;
@@ -52,28 +41,17 @@
 
 
 .button:hover {
-    -fx-background-color: 
-        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
-        #9d4024,
-        #d86e3a,
-        radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);
+    -fx-background-color: #3700b3;
 }
-    
-#logout{
-    -fx-background-color: linear-gradient(#ff5400, #be1d00);
-    -fx-background-radius: 30;
+
+#logoutButton{
+    -fx-background-color: #FF0000;
+    /*-fx-background-radius: 30;*/
     -fx-background-insets: 0;
-    -fx-text-fill: white;
+    -fx-text-fill: #ffffff;
 
 }
-#logout:hover {
-    -fx-background-color: 
-        linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
-        #9d4024,
-        #d86e3a,
-        radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);
-}
-    
+
 .slider{
     -fx-border-color: #ECE4B7;
     -fx-border-style: dashed;

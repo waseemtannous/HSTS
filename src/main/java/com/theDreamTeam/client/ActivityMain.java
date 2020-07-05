@@ -1,14 +1,12 @@
 package com.theDreamTeam.client;
 
 import com.theDreamTeam.entities.*;
-
-//import com.theDreamTeam.ExamBoundary;
-//import com.theDreamTeam.ExamController;
-//import com.theDreamTeam.LoginController;
-//import com.theDreamTeam.QuestionBoundary;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -20,16 +18,14 @@ import javafx.util.Pair;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Character.MAX_VALUE;
+
 
 public class ActivityMain {
 
-    public static ExamController examController = new ExamController();
-
     public static ExamBoundary examBoundary = new ExamBoundary();
-
-    public static QuestionController questionController = new QuestionController();
 
     public static QuestionBoundary questionBoundary = new QuestionBoundary();
 
@@ -72,16 +68,19 @@ public class ActivityMain {
 
         VBox sideBar = new VBox(20);
         enterExam = new Button("Enter Exam");
+        enterExam.setMaxWidth(MAX_VALUE);
         enterExam.setOnAction(e -> examBoundary.enterExamScreen());
 
         myExamsButton = new Button("Exams Copies");
         myExamsButton.setOnAction(e -> examBoundary.examsCopies());
+        myExamsButton.setMaxWidth(MAX_VALUE);
 
         Button logoutButton = createLogoutButton();
 
         sideBar.getChildren().addAll(enterExam, myExamsButton, logoutButton);
         sideBar.setSpacing(50);
         sideBar.setAlignment(Pos.CENTER);
+        sideBar.getStyleClass().add("mainMenuBar");
 
         welcome.setText(studentGreeting);
 
@@ -90,11 +89,11 @@ public class ActivityMain {
         App.mainScreen.setCenter(welcome);
 
         App.scene = new Scene(App.mainScreen, App.hSize, App.vSize );
-//        try {
-//            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
-//        } catch (MalformedURLException e) {
-//            errorHandle("An Error Has Occurred");
-//        }
+        try {
+            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
+        } catch (MalformedURLException e) {
+            errorHandle("An Error Has Occurred");
+        }
         App.stage.setScene(App.scene);
         App.stage.show();
     }
@@ -105,17 +104,22 @@ public class ActivityMain {
 
         VBox sideBar = new VBox(20);
         Button questionsDrawer = new Button("Questions Drawer");
+        questionsDrawer.setMaxWidth(MAX_VALUE);
         questionsDrawer.setOnAction(e -> questionBoundary.getQuestionsForDrawer());
         Button examsDrawer = new Button("Exams Drawer");
+        examsDrawer.setMaxWidth(MAX_VALUE);
         examsDrawer.setOnAction(e -> examBoundary.showExamsDrawer());
         Button examsCopies = new Button("Exams Copies");
+        examsCopies.setMaxWidth(MAX_VALUE);
         examsCopies.setOnAction(e -> examBoundary.examsCopies());
         Button checkExams = new Button(" Check Exams");
+        checkExams.setMaxWidth(MAX_VALUE);
         checkExams.setOnAction(e -> examBoundary.checkExams());
         Button stats = new Button("Statistics");
+        stats.setMaxWidth(MAX_VALUE);
         stats.setOnAction(e -> statisticsBoundary.getStatistics());
-
         Button extraTime = new Button("Extend Exam Time");
+        extraTime.setMaxWidth(MAX_VALUE);
         extraTime.setOnAction(e -> extendTimeForExam());
 
         Button logoutButton = createLogoutButton();
@@ -123,6 +127,7 @@ public class ActivityMain {
         sideBar.getChildren().addAll(questionsDrawer, examsDrawer, examsCopies, checkExams, stats, extraTime, logoutButton);
         sideBar.setSpacing(50);
         sideBar.setAlignment(Pos.CENTER);
+        sideBar.getStyleClass().add("mainMenuBar");
 
         welcome.setText(teacherGreeting);
 
@@ -131,11 +136,11 @@ public class ActivityMain {
         App.mainScreen.setCenter(welcome);
 
         App.scene = new Scene(App.mainScreen, App.hSize, App.vSize );
-//        try {
-//            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
-//        } catch (MalformedURLException e) {
-//            errorHandle("An Error Has Occurred");
-//        }
+        try {
+            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
+        } catch (MalformedURLException e) {
+            errorHandle("An Error Has Occurred");
+        }
         App.stage.setScene(App.scene);
         App.stage.show();
     }
@@ -147,18 +152,22 @@ public class ActivityMain {
         VBox sideBar = new VBox(20);
 
         Button questionsDrawer = new Button("Questions Drawer");
+        questionsDrawer.setMaxWidth(MAX_VALUE);
         questionsDrawer.setOnAction(e -> questionBoundary.getQuestionsForDrawer());
         Button examsDrawer = new Button("Exams Drawer");
+        examsDrawer.setMaxWidth(MAX_VALUE);
         examsDrawer.setOnAction(e -> examBoundary.showExamsDrawer());
         Button reports = new Button("Exams Copies");
+        reports.setMaxWidth(MAX_VALUE);
         reports.setOnAction(e -> examBoundary.examsCopies());
         Button extendTimeRequestsButton = new Button("Extend Time Requests");
-        extendTimeRequestsButton.setOnAction(e -> {
-            extendTimeRequests();
-        });
+        extendTimeRequestsButton.setMaxWidth(MAX_VALUE);
+        extendTimeRequestsButton.setOnAction(e -> extendTimeRequests());
         Button examsCopies = new Button("Exams Copies");
+        examsCopies.setMaxWidth(MAX_VALUE);
         examsCopies.setOnAction(e -> examBoundary.examsCopies());
         Button stats = new Button("Statistics");
+        stats.setMaxWidth(MAX_VALUE);
         stats.setOnAction(e -> statisticsBoundary.getStatistics());
 
         Button logoutButton = createLogoutButton();
@@ -166,6 +175,7 @@ public class ActivityMain {
         sideBar.getChildren().addAll(questionsDrawer,  examsDrawer, extendTimeRequestsButton, reports, stats, logoutButton);
         sideBar.setSpacing(50);
         sideBar.setAlignment(Pos.CENTER);
+        sideBar.getStyleClass().add("mainMenuBar");
 
         welcome.setText(managerGreeting);
 
@@ -174,11 +184,11 @@ public class ActivityMain {
         App.mainScreen.setCenter(welcome);
 
         App.scene = new Scene(App.mainScreen, App.hSize, App.vSize );
-//        try {
-//            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
-//        } catch (MalformedURLException e) {
-//            errorHandle("An Error Has Occurred");
-//        }
+        try {
+            App.scene.getStylesheets().add((new File("test.css")).toURI().toURL().toExternalForm());
+        } catch (MalformedURLException e) {
+            errorHandle("An Error Has Occurred");
+        }
         App.stage.setScene(App.scene);
         App.stage.show();
     }
@@ -186,10 +196,10 @@ public class ActivityMain {
     public HBox createTopBar() {
         HBox topBar = new HBox(20);
         Text greetingText = new Text("Hello " + App.user.getUsername());
-        App.logo.setText("LOGO");
         mainScreenBtn = new Button("Home");
         mainScreenBtn.setOnAction(e -> App.mainScreen.setCenter(welcome));
-//        String imgUrl = getImageURL("logo1.png");
+        mainScreenBtn.setMaxHeight(MAX_VALUE);
+//        String imgUrl = System.getProperty("user.dir") + "/src/main/resources/logo/logo1.png";
 //        ImageView logo = new ImageView(imgUrl);
 //        logo.setPreserveRatio(true);
 //        logo.setFitHeight(50);
@@ -197,6 +207,7 @@ public class ActivityMain {
 
         topBar.getChildren().addAll(greetingText, mainScreenBtn);
         topBar.setAlignment(Pos.CENTER);
+        topBar.getStyleClass().add("mainMenuBar");
         return topBar;
     }
 
@@ -207,6 +218,8 @@ public class ActivityMain {
     public Button createLogoutButton() {
         logoutButton = new Button("Logout");
         logoutButton.setOnAction(e -> loginController.logout());
+        logoutButton.setId("logoutButton");
+        logoutButton.setMaxWidth(MAX_VALUE);
         return logoutButton;
     }
 
@@ -215,7 +228,7 @@ public class ActivityMain {
         ProgressBar progressBar = new ProgressBar(-0.1f);
         scrollPane.setContent(progressBar);
         App.mainScreen.setCenter(scrollPane);
-        Message message = new Message(Message.getExtendTimeRequests);
+        Message message = new Message(Query.getExtendTimeRequests);
         App.client.sendMessageToServer(message);
     }
 
@@ -243,7 +256,7 @@ public class ActivityMain {
                 request.setAnswer(true);
                 requests.remove(request);
                 receiveExtendTimeRequests(requests);
-                Message message = new Message(Message.sendExtraTime, request);
+                Message message = new Message(Query.sendExtraTime, request);
                 App.client.sendMessageToServer(message);
             });
             Button decline = new Button("Decline");
@@ -251,7 +264,7 @@ public class ActivityMain {
                 request.setAnswer(false);
                 requests.remove(request);
                 receiveExtendTimeRequests(requests);
-                Message message = new Message(Message.sendExtraTime, request);
+                Message message = new Message(Query.sendExtraTime, request);
                 App.client.sendMessageToServer(message);
             });
 
@@ -336,7 +349,7 @@ public class ActivityMain {
             request.setAddedTime(Integer.parseInt(time.getText()));
             request.setTeacher((Teacher) App.user);
             request.setExplanation(explanation.getText());
-            Message message = new Message(Message.extraTime, new Pair<>(request, code.getText()));
+            Message message = new Message(Query.extraTime, new Pair<>(request, code.getText()));
             App.client.sendMessageToServer(message);
         });
 

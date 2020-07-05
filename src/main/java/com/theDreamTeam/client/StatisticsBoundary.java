@@ -2,6 +2,7 @@ package com.theDreamTeam.client;
 
 import com.theDreamTeam.entities.Course;
 import com.theDreamTeam.entities.Message;
+import com.theDreamTeam.entities.Query;
 import com.theDreamTeam.entities.Statistics;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,8 +33,7 @@ public class StatisticsBoundary {
         ProgressBar progressBar = new ProgressBar(-0.1f);
         scrollPane.setContent(progressBar);
         App.mainScreen.setCenter(scrollPane);
-        Message message = new Message(Message.getCoursesForStats);
-        message.setUser(App.user);
+        Message message = new Message(Query.getCoursesForStats);
         App.client.sendMessageToServer(message);
     }
 
@@ -62,7 +62,7 @@ public class StatisticsBoundary {
                     selectedCourse = course;
             }
             assert selectedCourse != null;
-            Message message = new Message(Message.getStats, selectedCourse.getId());
+            Message message = new Message(Query.getStats, selectedCourse.getId());
             App.client.sendMessageToServer(message);
         });
 

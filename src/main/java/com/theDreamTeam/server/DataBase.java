@@ -1,6 +1,7 @@
 package com.theDreamTeam.server;
 
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import com.theDreamTeam.entities.*;
 import javafx.util.Pair;
 import org.hibernate.HibernateException;
@@ -10,10 +11,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -67,7 +66,7 @@ public class DataBase { // class that has all database related functions for eas
 			session = sessionFactory.openSession();
 			session.beginTransaction();
 
-//			initializeData();
+			initializeData();	// method that initializes the database with users and courses
 
 		} catch (Exception exception) {
 			if (session != null) {
@@ -118,8 +117,10 @@ public class DataBase { // class that has all database related functions for eas
 		course.addQuestion(question);
 		System.out.println("1");
 		System.out.println("2");
+		question.setId((course.getId() * 100) + course.getQuestionId());
 		session.save(question);
 		System.out.println("3");
+		course.setQuestionId(course.getQuestionId() + 1);
 		session.update(course);
 		System.out.println("4");
 		System.out.println("5");
@@ -137,15 +138,19 @@ public class DataBase { // class that has all database related functions for eas
 		System.out.println("waseem3");
 		System.out.println("waseem4");
 		for (GradedQuestion question : exam.getGradedQuestions()) {
+			System.out.println("for1");
 			question.setCourse(course);
+			System.out.println("for2");
 			session.save(question);
 		}
+		exam.setId((courseId * 100) + course.getEwxamId());
 		session.save(exam);
 		System.out.println("here1");
 		System.out.println("here1.5");
 		System.out.println("here2");
 		session.update(teacher);
 		System.out.println("waseem8");
+		course.setEwxamId(course.getEwxamId() + 1);
 		session.update(course);
 		System.out.println("waseem9");
 	}
@@ -161,18 +166,16 @@ public class DataBase { // class that has all database related functions for eas
 		course.getDocumentExams().add(exam);
 		System.out.println("waseem3");
 		System.out.println("waseem4");
+		exam.setId((courseId * 100) + course.getEwxamId());
 		session.save(exam);
 		System.out.println("here1");
 		System.out.println("here1.5");
 		System.out.println("here2");
 		session.update(teacher);
 		System.out.println("waseem8");
+		course.setEwxamId(course.getEwxamId() + 1);
 		session.update(course);
 		System.out.println("waseem9");
-	}
-
-	public void saveExamCopy(ExamCopy exam) {
-		session.save(exam);
 	}
 
 	public boolean saveExecutableExam(ExecutableExam exam) {
@@ -201,53 +204,6 @@ public class DataBase { // class that has all database related functions for eas
 		return true;
 	}
 
-	public synchronized void deleteQuestionById(int id) {
-		try (Connection connection = DriverManager.getConnection(url, username, password)) {
-
-			String sql = "DELETE FROM question WHERE id = ?";
-			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setString(1, ((Integer) id).toString());
-			int rows = statement.executeUpdate();
-			System.out.println(rows + " record(s) deleted.");
-			connection.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////
-	public synchronized void deleteExamById(int id) {
-		try (Connection connection = DriverManager.getConnection(url, username, password)) {
-
-			String sql = "DELETE FROM exam WHERE id = ?";
-			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setString(1, ((Integer) id).toString());
-			int rows = statement.executeUpdate();
-			System.out.println(rows + " record(s) deleted.");
-			connection.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	 //Gets copys by USER
-	public List<ExamCopy> getAllCopys(User user) {
-		CriteriaBuilder builder = session.getCriteriaBuilder();
-		CriteriaQuery<User> query = builder.createQuery(User.class);
-		query.from(User.class);
-		List<User> users = session.createQuery(query).getResultList();
-		List<User> users2 = new ArrayList<>();
-		for (User user1 : users) {
-			if ((user1.getUsername().equals(user.getUsername())))
-				users2.add(user1);
-		}
-
-		if (!users2.isEmpty())
-			return ((Student) users2.get(0)).getExams();
-
-		return null;
-	}
-
 		//Encrypts the password using "SHA256".
 	public static synchronized String SHA256(String pass) {
 
@@ -274,43 +230,6 @@ public class DataBase { // class that has all database related functions for eas
 
 	}
 
-	// Check if the User is valid
-
-	public synchronized static int checkUser(User user) {// If 0 all good If 1 Username is not valid else 2 Password is
-															// not
-		// valid
-		CriteriaBuilder builder = session.getCriteriaBuilder();
-		CriteriaQuery<User> query = builder.createQuery(User.class);
-		query.from(User.class);
-
-		List<User> users = session.createQuery(query).getResultList();
-		List<User> users2 = new ArrayList<>();
-		System.out.println(users.size());
-		for (User user1 : users) {
-			System.out.println(user1.getUsername());
-
-			if ((user1.getUsername()).equals(user.getUsername())) {
-				System.out.println(user.getUsername());
-				users2.add(user1);
-				System.out.println(user.getUsername());
-				break;
-
-			}
-		}
-
-		// if user name is not valid
-		if (users2.isEmpty())
-			return 1;
-
-		// if the password is not valid
-
-		if (!(users2.get(0).getPassword()).equals(user.getPassword()))
-			return 2;
-		// Every thing is OK!!
-		return 0;
-
-	}
-
 	//Changes the connected status.
 	public synchronized void logOut(User user) {
 		user.setConnected(false);
@@ -321,16 +240,6 @@ public class DataBase { // class that has all database related functions for eas
 	public static void closeConnection() {
 		session.close();
 		System.out.println("session closed");
-	}
-
-	public <T> List<T> getAllCourses(Class<T> object) {
-		CriteriaBuilder builder = session.getCriteriaBuilder();
-		CriteriaQuery<T> criteriaQuery = builder.createQuery(object);
-		Root<T> rootEntry = criteriaQuery.from(object);
-		CriteriaQuery<T> allCriteriaQuery = criteriaQuery.select(rootEntry);
-
-		TypedQuery<T> allQuery = session.createQuery(allCriteriaQuery);
-		return allQuery.getResultList();
 	}
 
 	public List<ExamCopy> getExamsCopy(Teacher teacher) {
@@ -371,14 +280,18 @@ public class DataBase { // class that has all database related functions for eas
 		return copies;
 	}
 
-	public static List<Answer> getExamAnswers(int examid) {
-		ExamCopy exam = session.get(ExamCopy.class, examid);
-		List<Answer> temp = new ArrayList<>();
-		for (Answer answer : exam.getAnswers()) {
-			temp.add(session.get(Answer.class, answer.getId()));
+	public void deleteTimeRequest(ExtendTimeRequest time) {
+		try (Connection connection = DriverManager.getConnection(url, username, password)) {
+			String sql = "DELETE FROM extendtimerequest WHERE id = ?";
+			PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setString(1, ((Integer) time.getId()).toString());
+			int rows = statement.executeUpdate();
+			System.out.println(rows + " record(s) deleted.");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return temp;
 	}
+
 
 	public int getCourseIdForExamCopy(int examId) {
 		ExamCopy exam = session.get(ExamCopy.class, examId);
@@ -392,8 +305,7 @@ public class DataBase { // class that has all database related functions for eas
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		CriteriaQuery<ExamCopy> query = builder.createQuery(ExamCopy.class);
 		query.from(ExamCopy.class);
-		List<ExamCopy> exams = session.createQuery(query).getResultList();
-		return exams;
+		return session.createQuery(query).getResultList();
 	}
 
 	public List<ExtendTimeRequest> getAllExtendTimeRequest() {
@@ -421,8 +333,7 @@ public class DataBase { // class that has all database related functions for eas
 		CriteriaBuilder builder = session.getCriteriaBuilder();
 		CriteriaQuery<Course> query = builder.createQuery(Course.class);
 		query.from(Course.class);
-		List<Course> courses = session.createQuery(query).getResultList();
-		return courses;
+		return session.createQuery(query).getResultList();
 	}
 
 	public List<ExamCopy> getUncheckedExams(Teacher teacher, int courseId) {
@@ -495,20 +406,6 @@ public class DataBase { // class that has all database related functions for eas
 				break;
 			}
 		}
-	}
-
-	// Get by ExecutableExam ID
-	public ExecutableExam getExecutableExamById(int examID) {
-		CriteriaBuilder builder = session.getCriteriaBuilder();
-		CriteriaQuery<ExecutableExam> query = builder.createQuery(ExecutableExam.class);
-		query.from(ExecutableExam.class);
-		List<ExecutableExam> exams = session.createQuery(query).getResultList();
-		for (ExecutableExam exam : exams) {
-			if (exam.getId() == examID)
-				return exam;
-		}
-
-		return null;
 	}
 
 	// Get by ExecutableExam Code
@@ -613,18 +510,6 @@ public class DataBase { // class that has all database related functions for eas
 		return successful;
 	}
 
-	public void deleteTimeRequest(ExtendTimeRequest time) {
-		try (Connection connection = DriverManager.getConnection(url, username, password)) {
-			String sql = "DELETE FROM extendtimerequest WHERE id = ?";
-			PreparedStatement statement = connection.prepareStatement(sql);
-			statement.setString(1, ((Integer) time.getId()).toString());
-			int rows = statement.executeUpdate();
-			System.out.println(rows + " record(s) deleted.");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	public List<Exam> getExamsByCourseId(int id) {
 		Course course = session.get(Course.class, id);
 		for (RegularExam exam : course.getRegularExams()) {
@@ -671,45 +556,56 @@ public class DataBase { // class that has all database related functions for eas
 	}
 
 
-	private static void initializeData() throws Exception {
+	private static void initializeData() {
 		Teacher oren = new Teacher("2", SHA256("2"));
-		Teacher robby = new Teacher("Robby Goman", SHA256("robby69"));
-		Teacher antonio = new Teacher("Antonio Suli", SHA256("antonio69"));
-		Teacher saji = new Teacher("Saji Assi", SHA256("saji69"));
-		Teacher rawad = new Teacher("Rawad Khalaily", SHA256("rawad69"));
+		oren.setId(123);
+//		Teacher robby = new Teacher("Robby Goman", SHA256("robby69"));
+//		robby.setId(456);
+//		Teacher antonio = new Teacher("Antonio Suli", SHA256("antonio69"));
+//		antonio.setId(789);
+//		Teacher saji = new Teacher("Saji Assi", SHA256("saji69"));
+//		Teacher rawad = new Teacher("Rawad Khalaily", SHA256("rawad69"));
 
 
 //		session.flush();
 
 		Student waseem = new Student("1", SHA256("1"));
-		Student faroq = new Student("Faroq Krayem", SHA256("faroq69"));
-		Student lionel = new Student("Lionel Messi", SHA256("lionel69"));
-		Student paul = new Student("Paul Pogba", SHA256("paul69"));
-		Student alexis = new Student("Alexis Texas", SHA256("alexis69"));
+		waseem.setId(456);
+//		Student faroq = new Student("Faroq Krayem", SHA256("faroq69"));
+//		Student lionel = new Student("Lionel Messi", SHA256("lionel69"));
+//		Student paul = new Student("Paul Pogba", SHA256("paul69"));
+//		Student alexis = new Student("Alexis Texas", SHA256("alexis69"));
 
 
 //		session.flush();
 
 		Manager aboIbrahim = new Manager("3", SHA256("3"));
+		aboIbrahim.setId(789);
 
 		List<Teacher> list1 = new ArrayList<>();
 		list1.add(oren);
 		Course course1 = new Course("Data Structures", list1);
-		list1.add(saji);
+		course1.setId(1);
+//		list1.add(saji);
 		Course course2 = new Course("Operating Systems", list1);
+		course2.setId(2);
 		list1.remove(oren);
-		list1.add(antonio);
+//		list1.add(antonio);
 		Course course3 = new Course("Calculus", list1);
-		list1.add(rawad);
+		course3.setId(3);
+//		list1.add(rawad);
 		Course course4 = new Course("Algebra", list1);
-		list1.add(robby);
+		course4.setId(4);
+//		list1.add(robby);
 		Course course5 = new Course("Introduction to CS", list1);
+		course5.setId(5);
 
-		course1.addStudent(waseem,alexis);
-		course2.addStudent(lionel,paul);
-		course3.addStudent(waseem,paul);
-		course4.addStudent(faroq,alexis);
-		course5.addStudent(faroq,waseem);
+//		course1.addStudent(waseem,alexis);
+		course1.addStudent(waseem);
+//		course2.addStudent(lionel,paul);
+//		course3.addStudent(waseem,paul);
+//		course4.addStudent(faroq,alexis);
+//		course5.addStudent(faroq,waseem);
 
 //		session.flush();
 
@@ -1007,17 +903,17 @@ public class DataBase { // class that has all database related functions for eas
 //		doc2.setChecked(true);
 
 		session.save(oren);
-		session.save(robby);
-		session.save(rawad);
-		session.save(saji);
-		session.save(antonio);
+//		session.save(robby);
+//		session.save(rawad);
+//		session.save(saji);
+//		session.save(antonio);
 
 
 		session.save(waseem);
-		session.save(faroq);
-		session.save(lionel);
-		session.save(paul);
-		session.save(alexis);
+//		session.save(faroq);
+//		session.save(lionel);
+//		session.save(paul);
+//		session.save(alexis);
 
 		session.save(aboIbrahim);
 

@@ -1,17 +1,11 @@
 package com.theDreamTeam.client;
 
 import com.theDreamTeam.entities.*;
-
-//import com.theDreamTeam.ExamController;
-//import com.theDreamTeam.QuestionBoundary;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.text.SimpleDateFormat;
@@ -41,35 +35,10 @@ public class ExamBoundary {
 
     public static Date end;
 
+    public static Date start;
+
     public static byte[] document = null;
 
-    ////////////////// student reports ////////////////////
-
-//    public void studentReports() {
-//        VBox vbox = new VBox(50);
-//        selectorPane = new HBox();
-//        pane = new ScrollPane();
-//        selectorPane.setAlignment(Pos.CENTER);
-//
-//        List<Course> courses = ((Student)App.user).getCourses();
-//
-//        List<String> coursesNames = new ArrayList<>();
-//        for (Course course : courses) {
-//            coursesNames.add(course.getName());
-//        }
-//
-//        ChoiceBox<String> choiceBox = new ChoiceBox<>();
-//        for (String name : coursesNames) {
-//            choiceBox.getItems().add(name);
-//        }
-//        choiceBox.getSelectionModel().select(0);
-//        Button searchButton = new Button("Search");
-//        searchButton.setOnAction(e -> examController.getExamsCopiesForStudent(choiceBox.getSelectionModel().getSelectedItem()));
-////        searchButton.setOnAction(e -> showExamsCopies(App.list));
-//        selectorPane.getChildren().addAll(choiceBox, searchButton);
-//        vbox.getChildren().addAll(selectorPane, pane);
-//        App.mainScreen.setCenter(vbox);
-//    }
 
     public void showExamsCopies(List<Pair<ExamCopy, List<Answer>>> list) {
         List<ExamCopy> exams = new ArrayList<>();
@@ -104,6 +73,12 @@ public class ExamBoundary {
     public void showExamCopy(Pair<ExamCopy, List<Answer>> pair) {
         ExamCopy exam = pair.getKey();
         VBox vbox = new VBox(10);
+
+        Text date = new Text("Date: " + exam.getDay() + "/" + exam.getMonth() + "/" + exam.getYear());
+
+        Text duration = new Text("Duration: " + exam.getDuration() + " minutes");
+
+        vbox.getChildren().addAll(date, duration);
 
         if (exam.getExecutableExam().getType().equals("regular")) {
             Text teacher = new Text("Teacher: " + exam.getExecutableExam().getRegularExam().getTeacher().getUsername());
@@ -158,10 +133,9 @@ public class ExamBoundary {
         pane.setContent(vbox);
     }
 
-    //////////////////////////////////////////////////////////////
 
     public void showExamsDrawer() {
-        Message message = new Message(Message.getCoursesForExamsDrawer);
+        Message message = new Message(Query.getCoursesForExamsDrawer);
         App.client.sendMessageToServer(message);
     }
 
@@ -201,7 +175,7 @@ public class ExamBoundary {
                     selectedCourse = tempCourse;
             }
             System.out.println("exams drawer search btn");
-            Message message = new Message(Message.getExamsDrawer, selectedCourse.getId());
+            Message message = new Message(Query.getExamsDrawer, selectedCourse.getId());
             App.client.sendMessageToServer(message);
             newExambtn.setDisable(false);
         });
@@ -284,7 +258,7 @@ public class ExamBoundary {
         savebtn.setOnAction(e -> {
             Exam exam = new Exam(notesForTeacher.getText(), notesForStudent.getText(), documentExam.getTeacher(), documentExam.getCourse(), Integer.parseInt(duration.getText()), 100);
             DocumentExam newDocumentExam = new DocumentExam(exam, documentExam.getFile());
-            Message message = new Message(Message.saveNewDocumentExam, newDocumentExam);
+            Message message = new Message(Query.saveNewDocumentExam, newDocumentExam);
             App.client.sendMessageToServer(message);
         });
 
@@ -384,35 +358,22 @@ public class ExamBoundary {
         pane.setContent(attributes);
     }
 
-    public void invalidExam() {
-        Stage stage = new Stage();
-        VBox vbox = new VBox(30);
-        Text invalid = new Text("Invalid Exam.");
-        Button btn = new Button("Ok");
-        btn.setOnAction(e -> stage.close());
-        vbox.getChildren().addAll(invalid, btn);
-        Scene scene = new Scene(vbox, 100, 100);
-        stage.setScene(scene);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.show();
-    }
-
     public void startExam(ExecutableExam executableExam) {
         VBox vbox = new VBox(20);
         Button finishbtn = new Button("Finish");
         vbox.getChildren().add(finishbtn);
 
-        Text examId = new Text("Exam Id: " + executableExam.getRegularExam().getId());
-        Text course = new Text("Course: " + executableExam.getRegularExam().getCourse().getId());
-        Text teacher = new Text("Teacher: " + executableExam.getRegularExam().getTeacher().getId());
-        Text grade = new Text("Max Grade: " + executableExam.getRegularExam().getMaxGrade());
-        Text notes = new Text("Notes: " + executableExam.getRegularExam().getNotesForStudent());
+        Text examId = new Text("Exam Id: " + executableExam.getExam().getId());
+        Text course = new Text("Course: " + executableExam.getExam().getCourse().getId());
+        Text teacher = new Text("Teacher: " + executableExam.getExam().getTeacher().getId());
+        Text grade = new Text("Max Grade: " + executableExam.getExam().getMaxGrade());
+        Text notes = new Text("Notes: " + executableExam.getExam().getNotesForStudent());
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-        Date now = new Date();
-        long curTimeInMs = now.getTime();
+        start = new Date();
+        long curTimeInMs = start.getTime();
         end = new Date(curTimeInMs + (long)(ExamController.examTime * 60000));
 
-        Text startTime = new Text("Start Time: " + formatter.format(now));
+        Text startTime = new Text("Start Time: " + formatter.format(start));
         endTime = new Text("Finish Time: " + formatter.format(end));
         vbox.getChildren().addAll(examId, course, teacher, grade, notes, startTime, endTime);
 
@@ -428,12 +389,6 @@ public class ExamBoundary {
                 ExamController.answers.add(new Answer(question));
 
             VBox temp = new VBox(20);
-
-            Button savebtn = new Button("Save");
-            savebtn.setOnAction(e -> {
-                ExamController.finished = true;
-                examController.finishExam(executableExam);
-            });
 
             vbox.getChildren().add(temp);
 
@@ -460,6 +415,10 @@ public class ExamBoundary {
             vbox.getChildren().add(buttons);
 
         } else {
+            finishbtn.setOnAction(e -> {
+                ExamController.timer.stop();
+                examController.finishExam(executableExam);
+            });
             Button questionnaire = new Button("Download Questionnaire");
             Button answer = new Button("Upload Your Answer");
 
@@ -525,14 +484,6 @@ public class ExamBoundary {
         vbox.getChildren().addAll(title, ansAHbox, ansBHbox, ansCHbox, ansDHbox);
     }
 
-    public void invalidCode() {
-
-    }
-
-    public void invalidStudent() {
-
-    }
-
     public void executeExam(Exam exam) {
         VBox vbox = new VBox(20);
         Button btn = new Button("Execute");
@@ -559,29 +510,6 @@ public class ExamBoundary {
         });
 
         pane.setContent(vbox);
-    }
-
-    // TODO: implement
-    public void getExecutableExamAnswer(boolean answer) {
-        if (answer)
-            showExamsDrawer();
-        else {
-            Stage stage = new Stage();
-
-            Text text = new Text("Code Already Exists");
-            Button closeBtn = new Button("Close");
-            closeBtn.setOnAction(e -> {
-                stage.close();
-                executeExam(ExamBoundary.executeExam);
-            });
-
-            VBox vbox = new VBox(20);
-            vbox.getChildren().addAll(text, closeBtn);
-
-            Scene scene = new Scene(vbox, 200, 200);
-            stage.setScene(scene);
-            stage.show();
-        }
     }
 
     public void editRegularExam(RegularExam exam) {
@@ -632,11 +560,6 @@ public class ExamBoundary {
         pane.setContent(attributes);
     }
 
-    private void deleteQuestionFromExam(GradedQuestion question, RegularExam exam) {
-        exam.getGradedQuestions().remove(question);
-        editRegularExam(exam);
-    }
-
     public void enterExamScreen() {
         VBox vbox = new VBox();
         TextField code = new TextField();
@@ -653,8 +576,7 @@ public class ExamBoundary {
         ProgressBar progressBar = new ProgressBar(-0.1f);
         scrollPane.setContent(progressBar);
         App.mainScreen.setCenter(scrollPane);
-        Message message = new Message(Message.getCoursesForExamsCopies);
-        message.setUser(App.user);
+        Message message = new Message(Query.getCoursesForExamsCopies);
         App.client.sendMessageToServer(message);
     }
 
@@ -688,8 +610,7 @@ public class ExamBoundary {
         ProgressBar progressBar = new ProgressBar(-0.1f);
         scrollPane.setContent(progressBar);
         App.mainScreen.setCenter(scrollPane);
-        Message message = new Message(Message.getCoursesForExamsCheck);
-        message.setUser(App.user);
+        Message message = new Message(Query.getCoursesForExamsCheck);
         App.client.sendMessageToServer(message);
     }
 
@@ -784,7 +705,7 @@ public class ExamBoundary {
             if (!notesForGradeChange.getText().equals(""))
                 exam.setNotesForGradeChange(notesForGradeChange.getText());
             exam.setChecked(true);
-            Message message = new Message(Message.finalCopy, exam);
+            Message message = new Message(Query.finalCopy, exam);
             App.client.sendMessageToServer(message);
         });
 
@@ -804,10 +725,8 @@ public class ExamBoundary {
             }
         });
 
-        notesForGradeChange.textProperty().addListener( (item, oldValue, newValue) -> {
-            savebtn.setDisable((gradeChange.getText().equals("") && !notesForGradeChange.getText().equals("")) ||
-                    (!gradeChange.getText().equals("") && notesForGradeChange.getText().equals("")));
-        });
+        notesForGradeChange.textProperty().addListener( (item, oldValue, newValue) -> savebtn.setDisable((gradeChange.getText().equals("") && !notesForGradeChange.getText().equals("")) ||
+                (!gradeChange.getText().equals("") && notesForGradeChange.getText().equals(""))));
 
         pane.setContent(vbox);
     }

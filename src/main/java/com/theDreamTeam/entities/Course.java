@@ -9,8 +9,11 @@ import java.util.List;
 public class Course implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    private int questionId;
+
+    private int ewxamId;
 
     private String name;
 
@@ -33,12 +36,12 @@ public class Course implements Serializable {
     } // ctor for hibernate
 
     public Course(String name, List<Teacher> teachers) {
+        questionId = 0;
+        ewxamId = 0;
         this.name = name;
         for (Teacher teacher : teachers)
             addTeacher(teacher);
     }
-    
-    
     
     public int getId() {
         return id;
@@ -46,6 +49,22 @@ public class Course implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
+    }
+
+    public int getEwxamId() {
+        return ewxamId;
+    }
+
+    public void setEwxamId(int ewxamId) {
+        this.ewxamId = ewxamId;
     }
 
     public String getName() {

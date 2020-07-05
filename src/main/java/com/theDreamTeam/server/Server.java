@@ -1,8 +1,8 @@
 package com.theDreamTeam.server;
 
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import com.theDreamTeam.ocsf.server.*;
 import com.theDreamTeam.entities.*;
+import com.theDreamTeam.ocsf.server.AbstractServer;
+import com.theDreamTeam.ocsf.server.ConnectionToClient;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -24,75 +24,65 @@ public class Server extends AbstractServer {
         Message message = (Message) msg;
         switch (message.getMsg()) {
 
-            case Message.saveQuestion: // SAVES THE QUESTION
+            case saveQuestion: // SAVES THE QUESTION
                 System.out.println("saveQuestion received");
                 App.database.saveQuestion((Question) message.getObject(), ((Question) message.getObject()).getCourse());
                 System.out.println("saveQuestion done");
                 List<Question> questions = App.database.getAllQuestions(((Question)message.getObject()).getCourse().getId());
                 try {
-                    client.sendToClient(new Message(Message.receiveQuestionsDrawer, questions));
+                    client.sendToClient(new Message(Query.receiveQuestionsDrawer, questions));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-            case Message.deleteQuestion: // NOT NEEDED
-                System.out.println("deleteQuestion received");
-                App.database.deleteQuestionById((Integer) message.getObject());
-                System.out.println("deleteQuestion done");
-                break;
-
-            case Message.requestAllExam: // RETURNS ALL THE EXAMS IN COURSE
+            case requestAllExam: // RETURNS ALL THE EXAMS IN COURSE
                 System.out.println("requestAllExam received");
                 try {
                     client.sendToClient(
-                            new Message(Message.requestAllExam, App.database.getAllExams((Integer) message.getObject())));
+                            new Message(Query.requestAllExam, App.database.getAllExams((Integer) message.getObject())));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 System.out.println("requestAllExam done");
                 break;
 
-            case Message.saveNewRegularExam: // SAVES THE EXAM
+            case saveNewRegularExam: // SAVES THE EXAM
                 System.out.println("saveNewExam received");
                 App.database.saveRegularExam((RegularExam) message.getObject(), ((Exam) message.getObject()).getCourse().getId());
                 System.out.println("saveNewExam done");
                 List<Exam> exams2 = App.database.getExamsByCourseId(((RegularExam) message.getObject()).getCourse().getId());
                 System.out.println("morsy2");
                 try {
-                    client.sendToClient(new Message(Message.receiveExamsDrawer, exams2));
+                    client.sendToClient(new Message(Query.receiveExamsDrawer, exams2));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-            case Message.saveNewDocumentExam :
+            case saveNewDocumentExam :
                 System.out.println("saveNewExam received");
                 App.database.saveDocumentExam((DocumentExam) message.getObject(), ((Exam) message.getObject()).getCourse().getId());
                 System.out.println("saveNewExam done");
                 List<Exam> exams9 = App.database.getExamsByCourseId(((DocumentExam) message.getObject()).getCourse().getId());
                 System.out.println("morsy2");
                 try {
-                    client.sendToClient(new Message(Message.receiveExamsDrawer, exams9));
+                    client.sendToClient(new Message(Query.receiveExamsDrawer, exams9));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-            case Message.deleteExam: // NOT NEEDED
-                App.database.deleteExamById((Integer) message.getObject());
-                break;
-
-            case Message.saveExecutableExam: // The teacher starts the exam
+            case saveExecutableExam: // The teacher starts the exam
                 ExecutableExam exam1 = (ExecutableExam) message.getObject();
                 boolean success = App.database.saveExecutableExam(exam1);
                 int courseId = exam1.getType().equals("regular") ? exam1.getRegularExam().getCourse().getId() : exam1.getDocumentExam().getCourse().getId();
                 try{
                     if (success){
-                        Message msg1 = new Message(Message.receiveExamsDrawer, App.database.getExamsByCourseId(courseId));
+                        Message msg1 = new Message(Query.receiveExamsDrawer, App.database.getExamsByCourseId(courseId));
                         client.sendToClient(msg1);
                     } else {
-                        Message msg1 = new Message(Message.wrongCode);
+                        Message msg1 = new Message(Query.wrongCode);
                         client.sendToClient(msg1);
                     }
                 } catch (IOException e2) {
@@ -100,21 +90,21 @@ public class Server extends AbstractServer {
                 }
                 break;
 
-            case Message.saveExamCopy: // Checks the exam and sends it to the teacher
+            case saveExamCopy: // Checks the exam and sends it to the teacher
                 System.out.println("saveExamCopy");
                 checkExam((ExamCopy) message.getObject());
                 break;
 
-            case Message.receiveExamCopy: // Returns the examcopy
+            case receiveExamCopy: // Returns the examcopy
                 try {
-                    client.sendToClient(new Message(Message.receiveExamCopy,
+                    client.sendToClient(new Message(Query.receiveExamCopy,
                             App.database.receiveExamCopy(((User) client.getInfo("user")).getUsername())));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-            case Message.getExamByCode: // sends the exam to the client
+            case getExamByCode: // sends the exam to the client
                 String code = (String) message.getObject();
                 ExecutableExam execExam = App.database.getExecutableExamByCode(code);
                 Student student = (Student) client.getInfo("user");
@@ -128,7 +118,7 @@ public class Server extends AbstractServer {
                             if (course.getId() == execExam.getRegularExam().getCourse().getId()) {
                                 try {
                                     System.out.println("send regular exam");
-                                    client.sendToClient(new Message(Message.receiveExamByCode, execExam));
+                                    client.sendToClient(new Message(Query.receiveExamByCode, execExam));
                                     System.out.println("exam sent");
                                     DataBase.session.getTransaction().commit();
                                     DataBase.session.close();
@@ -140,7 +130,7 @@ public class Server extends AbstractServer {
                         } else if (course.getId() == execExam.getDocumentExam().getCourse().getId()) {
                             try {
                                 System.out.println("send document exam");
-                                client.sendToClient(new Message(Message.receiveExamByCode, execExam));
+                                client.sendToClient(new Message(Query.receiveExamByCode, execExam));
                                 DataBase.session.getTransaction().commit();
                                 DataBase.session.close();
                                 return;
@@ -152,7 +142,7 @@ public class Server extends AbstractServer {
                 } else {
                     try {
                         System.out.println("invalid code");
-                        client.sendToClient(new Message(Message.invalidExamCode, null));
+                        client.sendToClient(new Message(Query.invalidExamCode, null));
                         DataBase.session.getTransaction().commit();
                         DataBase.session.close();
                         return;
@@ -163,20 +153,20 @@ public class Server extends AbstractServer {
                 }
                 try {
                     System.out.println("invalid student");
-                    client.sendToClient(new Message(Message.invalidStudent, null));
+                    client.sendToClient(new Message(Query.invalidStudent, null));
                     break;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-            case Message.logIn:
+            case logIn:
                 User user = (User) message.getObject();
                 User validUser = App.database.getUser(user);
                 if (validUser != null) {
                     if (validUser.isConnected()) {
                         try {
-                            client.sendToClient(new Message(Message.userAlreadyConnected));
+                            client.sendToClient(new Message(Query.userAlreadyConnected));
                             break;
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -187,7 +177,7 @@ public class Server extends AbstractServer {
                     DataBase.session.update(validUser);
                     System.out.println("update");
                     try {
-                        client.sendToClient(new Message(Message.logInSuccessful, validUser));
+                        client.sendToClient(new Message(Query.logInSuccessful, validUser));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -201,29 +191,29 @@ public class Server extends AbstractServer {
                     }
                 } else {
                     try {
-                        client.sendToClient(new Message(Message.logInFailed));
+                        client.sendToClient(new Message(Query.logInFailed));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
                 break;
 
-            case Message.logout:
+            case logout:
                 App.database.logOut((User) client.getInfo("user"));
                 break;
 
-            case Message.finalCopy: // Saves/publishs the examcopy
+            case finalCopy: // Saves/publishs the examcopy
                 App.database.sendExamCopy((ExamCopy) message.getObject());
                 if (((ExamCopy) message.getObject()).getExecutableExam().getType().equals("regular")) {
                     try {
-                        client.sendToClient(new Message(Message.receiveExamsToCheck,
+                        client.sendToClient(new Message(Query.receiveExamsToCheck,
                                 App.database.getUncheckedExams((Teacher) client.getInfo("user"), ((ExamCopy) message.getObject()).getExecutableExam().getRegularExam().getCourse().getId())));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else {
                     try {
-                        client.sendToClient(new Message(Message.receiveExamsToCheck,
+                        client.sendToClient(new Message(Query.receiveExamsToCheck,
                                 App.database.getUncheckedExams((Teacher) client.getInfo("user"), ((ExamCopy) message.getObject()).getExecutableExam().getDocumentExam().getCourse().getId())));
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -231,9 +221,9 @@ public class Server extends AbstractServer {
                 }
                 break;
 
-            case Message.extraTime:
+            case extraTime:
                 boolean ans = App.database.extraTimeRequest((Pair<ExtendTimeRequest, String>) message.getObject(), (Teacher) client.getInfo("user"));
-                Message message9 = new Message(Message.extraTimeRequestFromTeacher, ans);
+                Message message9 = new Message(Query.extraTimeRequestFromTeacher, ans);
                 try {
                     client.sendToClient(message9);
                 } catch (IOException e) {
@@ -241,19 +231,19 @@ public class Server extends AbstractServer {
                 }
                 break;
 
-            case Message.sendExtraTime:
+            case sendExtraTime:
                 // NEED TO CHECK WHAT THE MANAGER RESPONDED
                 ExtendTimeRequest request = (ExtendTimeRequest) message.getObject();
                 if (request.isAnswer()) {
                     request.setExecutableExam(DataBase.session.get(ExecutableExam.class, request.getExecutableExam().getId()));
-                    sendToAllClients(new Message(Message.extraTime, request));
+                    sendToAllClients(new Message(Query.extraTime, request));
                 }
                 App.database.deleteTimeRequest((ExtendTimeRequest) message.getObject());
                 System.out.println("request deleted");
 
                 break;
 
-            case Message.getExamsCopies:
+            case getExamsCopies:
                 System.out.println("getExamsCopies");
                 List<Pair<ExamCopy,List<Answer>>> list = new ArrayList<>();
                 List<ExamCopy> exams;
@@ -285,13 +275,13 @@ public class Server extends AbstractServer {
                 }
                 try {
                     System.out.println("SENT !");
-                    client.sendToClient(new Message(Message.receiveExamsCopies, list));
+                    client.sendToClient(new Message(Query.receiveExamsCopies, list));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-            case Message.getCoursesForExamsCopies: // return courses for the user {receive}
+            case getCoursesForExamsCopies: // return courses for the user {receive}
                 List<Course> courses2 = App.database.getAllCourses();
                 List<Course> courses3 = new ArrayList<>();
                 if (client.getInfo("user") instanceof Teacher) {
@@ -307,28 +297,28 @@ public class Server extends AbstractServer {
                 }
                 if (client.getInfo("user") instanceof Manager) {
                     try {
-                        client.sendToClient(new Message(Message.receiveCoursesForExamsCopies, courses2));
+                        client.sendToClient(new Message(Query.receiveCoursesForExamsCopies, courses2));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else {
                     try {
-                        client.sendToClient(new Message(Message.receiveCoursesForExamsCopies, courses3));
+                        client.sendToClient(new Message(Query.receiveCoursesForExamsCopies, courses3));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
                 break;
 
-            case Message.getExtendTimeRequests: // send all Time req To manager
+            case getExtendTimeRequests: // send all Time req To manager
                 try {
-                    client.sendToClient(new Message(Message.receiveExtendTimeRequests, App.database.getAllExtendTimeRequest()));
+                    client.sendToClient(new Message(Query.receiveExtendTimeRequests, App.database.getAllExtendTimeRequest()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-            case Message.getCoursesForQuestionsDrawer: // return all courses for the teacher OR MANAGER {return receive}
+            case getCoursesForQuestionsDrawer: // return all courses for the teacher OR MANAGER {return receive}
                 List<Course> courses = App.database.getAllCourses();
                 System.out.println(courses.size());
                 System.out.println("morsy1");
@@ -346,30 +336,30 @@ public class Server extends AbstractServer {
 
                     try {
                         System.out.println("morsy2");
-                        client.sendToClient(new Message(Message.receiveCoursesForQuestionsDrawer, courses4));
+                        client.sendToClient(new Message(Query.receiveCoursesForQuestionsDrawer, courses4));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
                 } else {
                     try {
-                        client.sendToClient(new Message(Message.receiveCoursesForQuestionsDrawer, courses));
+                        client.sendToClient(new Message(Query.receiveCoursesForQuestionsDrawer, courses));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
                 break;
 
-            case Message.getQuestionsDrawer :
+            case getQuestionsDrawer :
                 List<Question> questions1 = App.database.getAllQuestions(((Course)message.getObject()).getId());
                 try {
-                    client.sendToClient(new Message(Message.receiveQuestionsDrawer, questions1));
+                    client.sendToClient(new Message(Query.receiveQuestionsDrawer, questions1));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-            case Message.getCoursesForExamsDrawer: // return all courses for the teacher OR MANAGER {return receive}
+            case getCoursesForExamsDrawer: // return all courses for the teacher OR MANAGER {return receive}
                 List<Course> courses1 = App.database.getAllCourses();
                 List<Course> courses5 = new ArrayList<>();
                 if (client.getInfo("user") instanceof Teacher) {
@@ -381,14 +371,14 @@ public class Server extends AbstractServer {
                     }
                     try {
                         System.out.println(courses5.size());
-                        client.sendToClient(new Message(Message.receiveCoursesForExamsDrawer, courses5));
+                        client.sendToClient(new Message(Query.receiveCoursesForExamsDrawer, courses5));
                         System.out.println("sent");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else {
                     try {
-                        client.sendToClient(new Message(Message.receiveCoursesForExamsDrawer, courses1));
+                        client.sendToClient(new Message(Query.receiveCoursesForExamsDrawer, courses1));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -396,28 +386,28 @@ public class Server extends AbstractServer {
                 break;
 
 
-            case Message.getExamsToCheck: // return ExamCopy in teacher {receive}
+            case getExamsToCheck: // return ExamCopy in teacher {receive}
                 try {
-                    client.sendToClient(new Message(Message.receiveExamsToCheck,
+                    client.sendToClient(new Message(Query.receiveExamsToCheck,
                             App.database.getUncheckedExams((Teacher) client.getInfo("user"), (int) message.getObject())));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-            case Message.getExamsDrawer :
+            case getExamsDrawer :
                 System.out.println("morsy1");
                 List<Exam> exams3 = App.database.getExamsByCourseId((int) message.getObject());
                 System.out.println(exams3.size());
                 System.out.println("morsy2");
                 try {
-                    client.sendToClient(new Message(Message.receiveExamsDrawer, exams3));
+                    client.sendToClient(new Message(Query.receiveExamsDrawer, exams3));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
 
-            case Message.getCoursesForExamsCheck :
+            case getCoursesForExamsCheck :
                 List<Course> courses8 = App.database.getAllCourses();
                 List<Course> courses9 = new ArrayList<>();
                 if (client.getInfo("user") instanceof Teacher) {
@@ -429,14 +419,14 @@ public class Server extends AbstractServer {
                     }
                     try {
                         System.out.println(courses9.size());
-                        client.sendToClient(new Message(Message.receiveCoursesForExamsCheck, courses9));
+                        client.sendToClient(new Message(Query.receiveCoursesForExamsCheck, courses9));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
                 break;
 
-            case Message.getCoursesForStats :
+            case getCoursesForStats :
                 List<Course> courses6 = App.database.getAllCourses();
                 List<Course> courses7 = new ArrayList<>();
                 if (client.getInfo("user") instanceof Teacher) {
@@ -448,25 +438,25 @@ public class Server extends AbstractServer {
                     }
                     try {
                         System.out.println(courses7.size());
-                        client.sendToClient(new Message(Message.receiveCoursesForStats, courses7));
+                        client.sendToClient(new Message(Query.receiveCoursesForStats, courses7));
                         System.out.println("sent");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } else {
                     try {
-                        client.sendToClient(new Message(Message.receiveCoursesForStats, courses6));
+                        client.sendToClient(new Message(Query.receiveCoursesForStats, courses6));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
                 break;
 
-            case Message.getStats:
+            case getStats:
                 System.out.println("morsy6");
                 List<Statistics> stats = App.database.getStats((User) client.getInfo("user"), (int) message.getObject());
                 System.out.println("morsy9");
-                Message message1 = new Message(Message.receiveStats, stats);
+                Message message1 = new Message(Query.receiveStats, stats);
                 try {
                     client.sendToClient(message1);
                 } catch (IOException e) {

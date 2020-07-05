@@ -1,7 +1,6 @@
 package com.theDreamTeam.server;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class App {
 

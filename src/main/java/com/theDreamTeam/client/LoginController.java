@@ -1,16 +1,16 @@
 package com.theDreamTeam.client;
 
-import com.theDreamTeam.entities.*;
+import com.theDreamTeam.entities.Message;
+import com.theDreamTeam.entities.Query;
+import com.theDreamTeam.entities.User;
 import javafx.application.Platform;
-
-import java.io.IOException;
 
 public class LoginController {
 
     public static LoginBoundary loginBoundary = new LoginBoundary();
 
     public void logIn(User user) {
-        Message message = new Message(Message.logIn, user);
+        Message message = new Message(Query.logIn, user);
         App.client.sendMessageToServer(message);
     }
 
@@ -29,7 +29,7 @@ public class LoginController {
     }
 
     public void logout() {
-        Message message = new Message(Message.logout);
+        Message message = new Message(Query.logout);
         Platform.runLater(() -> {
             App.stage.close();
             loginBoundary.loginScreen();

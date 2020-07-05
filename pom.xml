@@ -101,7 +101,7 @@
             </execution>
           </executions>
           <configuration>
-            <mainClass>com.theDreamTeam.server.App</mainClass>
+            <mainClass>com.theDreamTeam.server.Main</mainClass>
           </configuration>
         </plugin>
         <plugin>
@@ -109,7 +109,7 @@
           <artifactId>javafx-maven-plugin</artifactId>
           <version>0.0.4</version>
           <configuration>
-            <mainClass>com.theDreamTeam.client.App</mainClass>
+            <mainClass>com.theDreamTeam.client.Main</mainClass>
           </configuration>
         </plugin>
       </plugins>

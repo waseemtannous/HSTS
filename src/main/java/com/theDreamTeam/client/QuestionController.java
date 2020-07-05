@@ -1,19 +1,18 @@
 package com.theDreamTeam.client;
 
-import com.theDreamTeam.entities.*;
-
-import java.io.IOException;
+import com.theDreamTeam.entities.GradedQuestion;
+import com.theDreamTeam.entities.Message;
+import com.theDreamTeam.entities.Query;
+import com.theDreamTeam.entities.Question;
 
 public class QuestionController {
-
-    public static final QuestionBoundary questionBoundary = new QuestionBoundary();
 
     public GradedQuestion makeGradedQuestion(Question question, int grade) {
         return (new GradedQuestion(question, grade));
     }
 
     public void saveQuestion(Question question) {
-        Message message = new Message(Message.saveQuestion, question);
+        Message message = new Message(Query.saveQuestion, question);
         App.client.sendMessageToServer(message);
     }
 

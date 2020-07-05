@@ -28,8 +28,6 @@ public class Client extends AbstractClient {
 
     private static final ExamController examController = new ExamController();
 
-//    private static final Logger LOGGER =
-//            Logger.getLogger(Client.class.getName());
 
     public Client(String host, int port) {
         super(host, port);
@@ -37,121 +35,100 @@ public class Client extends AbstractClient {
 
     @Override
     protected void connectionEstablished() {
-        // TODO Auto-generated method stub
         super.connectionEstablished();
         LOGGER.info("Connected to server.");
     }
 
     @Override
     protected void handleMessageFromServer(Object msg) {
-        System.out.println("msg received from server");
-//        System.out.println(((User)(((Message) msg).getObject())).getUsername());
-
         Message message = (Message) msg;
 
         switch (message.getMsg()) {
-            case Message.receiveExamByCode:
-                System.out.println("receiveExamByCode");
+            case receiveExamByCode:
                 Platform.runLater(() -> examController.receiveExamByCode((ExecutableExam)message.getObject()));
                 break;
 
-            case Message.invalidExamCode :
-                System.out.println("invalidExamCode");
-                Platform.runLater(() -> examController.invalidCode());
+            case invalidExamCode :
+                Platform.runLater(examController::invalidCode);
                 break;
 
-            case Message.invalidStudent :
-                System.out.println("invalidStudent");
-                Platform.runLater(() -> examController.invalidStudent());
+            case invalidStudent :
+                Platform.runLater(examController::invalidStudent);
                 break;
 
-            case Message.receiveCoursesForReports :
-                System.out.println("receiveCoursesForReports");
+            case receiveCoursesForReports :
                 Platform.runLater(() -> examController.receiveCoursesForReports((List<Course>) message.getObject()));
                 break;
 
-            case Message.logInSuccessful:
-                System.out.println("logInSuccessful");
+            case logInSuccessful:
                 Platform.runLater(() -> loginController.loginSuccessful((User) message.getObject()));
                 break;
 
-            case Message.logInFailed :
-                System.out.println("logInFailed");
+            case logInFailed :
                 Platform.runLater(() -> loginController.invalidInput());
                 break;
 
-            case Message.userAlreadyConnected :
-                System.out.println("userAlreadyConnected");
+            case userAlreadyConnected :
                 Platform.runLater(() -> loginController.alreadyConnected());
                 break;
 
-            case Message.extendTimeRequestAnswer :
-                System.out.println("extendTimeRequestAnswer");
+            case extendTimeRequestAnswer :
                 Platform.runLater(() -> examController.extendTime((ExtendTimeRequest) message.getObject()));
                 break;
 
-            case Message.receiveExamsCopies :
-                System.out.println("receiveExamsCopies");
+            case receiveExamsCopies :
                 Platform.runLater(() -> examBoundary.showExamsCopies((List<Pair<ExamCopy, List<Answer>>>) message.getObject()));
                 break;
 
-            case Message.receiveCoursesForQuestionsDrawer:
-                System.out.println("receiveCoursesForQuestionsDrawer");
+            case receiveCoursesForQuestionsDrawer:
                 Platform.runLater(() -> questionBoundary.receiveCoursesForQuestionsDrawer((List<Course>) message.getObject()));
                 break;
 
-            case Message.receiveQuestionsDrawer :
-                System.out.println("receiveQuestionsDrawer");
+            case receiveQuestionsDrawer :
                 Platform.runLater(() -> questionBoundary.receiveQuestionsDrawer((List<Question>)message.getObject()));
                 break;
 
-            case Message.receiveExamsDrawer :
-                System.out.println("receiveExamsDrawer");
+            case receiveExamsDrawer :
                 Platform.runLater(() -> examBoundary.receiveExamsDrawer((List<Exam>) message.getObject()));
                 break;
 
-            case Message.receiveCoursesForExamsDrawer :
-                System.out.println("receiveCoursesForExamsDrawer");
+            case receiveCoursesForExamsDrawer :
                 Platform.runLater(() -> examBoundary.receiveCoursesForExamsDrawer((List<Course>) message.getObject()));
                 break;
 
-            case Message.receiveCoursesForExamsCopies :
-                System.out.println("receiveCoursesForExamsCopies");
+            case receiveCoursesForExamsCopies :
                 Platform.runLater(() -> examBoundary.receiveCoursesForExamsCopies((List<Course>) message.getObject()));
                 break;
 
-            case Message.receiveExtendTimeRequests :
-                System.out.println("receiveExtendTimeRequests");
+            case receiveExtendTimeRequests :
                 Platform.runLater(() -> activityMain.receiveExtendTimeRequests((List<ExtendTimeRequest>) message.getObject()));
                 break;
 
-            case Message.receiveExamsToCheck :
-                System.out.println("receiveExamsToCheck");
+            case receiveExamsToCheck :
                 Platform.runLater(() -> examBoundary.receiveExamsToCheck((List<ExamCopy>) message.getObject()));
                 break;
 
-            case Message.extraTime :
-                System.out.println("extraTime");
+            case extraTime :
                 Platform.runLater(() -> examController.extendTime((ExtendTimeRequest) message.getObject()));
                 break;
 
-            case Message.receiveCoursesForExamsCheck :
-                System.out.println("receiveCoursesForExamsCheck");
+            case receiveCoursesForExamsCheck :
                 Platform.runLater(() -> examBoundary.receiveCoursesForExamsCheck((List<Course>) message.getObject()));
                 break;
 
-            case Message.receiveCoursesForStats :
-                System.out.println("receiveCoursesForStats");
+            case receiveCoursesForStats :
                 Platform.runLater(() -> statisticsBoundary.receiveCourses((List<Course>) message.getObject()));
                 break;
 
-            case Message.receiveStats :
-                System.out.println("receiveStats");
+            case receiveStats :
                 Platform.runLater(() -> statisticsBoundary.receiveStats((List<Statistics>) message.getObject()));
                 break;
 
-            case Message.extraTimeRequestFromTeacher :
-                System.out.println("extraTimeRequestFromTeacher");
+            case wrongCode :
+                Platform.runLater(() -> ActivityMain.errorHandle("Code Already Exists"));
+                break;
+
+            case extraTimeRequestFromTeacher :
                 Platform.runLater(() -> {
                     if ((boolean) message.getObject())
                         App.mainScreen.setCenter(ActivityMain.welcome);
@@ -160,17 +137,11 @@ public class Client extends AbstractClient {
                 });
                 break;
 
-            case Message.wrongCode :
-                System.out.println("wrongCode");
-                Platform.runLater(() -> ActivityMain.errorHandle("Code Already Exists"));
-                break;
-
         }
     }
 
     @Override
     protected void connectionClosed() {
-        // TODO Auto-generated method stub
         super.connectionClosed();
         System.out.println("connection closed");
     }

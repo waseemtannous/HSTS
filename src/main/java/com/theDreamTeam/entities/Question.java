@@ -8,7 +8,6 @@ import java.io.Serializable;
 public class Question implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     private String title;
@@ -30,6 +29,7 @@ public class Question implements Serializable {
 
     public Question(String title, String answerA, String answerB, String answerC,
                     String answerD, String correctAns, Course course) {
+        this.id = (course.getId() * 100) + course.getQuestionId();
         this.title = title;
         this.answerA = answerA;
         this.answerB = answerB;
@@ -38,9 +38,11 @@ public class Question implements Serializable {
         this.correctAns = correctAns;
         this.course = course;
         course.addQuestion(this);
+
     }
 
     public Question(Question question) {
+        this.id = (question.getCourse().getId() * 100) + question.getCourse().getQuestionId();
         this.title = question.getTitle();
         this.answerA = question.getAnswerA();
         this.answerB = question.getAnswerB();
@@ -52,6 +54,10 @@ public class Question implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {

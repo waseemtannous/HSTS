@@ -8,7 +8,6 @@ import java.io.Serializable;
 public class Exam implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -28,6 +27,7 @@ public class Exam implements Serializable {
     public Exam() { }   // ctor for hibernate
 
     public Exam(Exam exam) {
+        this.id = (exam.getCourse().getId() * 100) + exam.getCourse().getEwxamId();
         this.notesForTeacher = exam.getNotesForTeacher();
         this.notesForStudent = exam.getNotesForStudent();
         this.teacher = exam.getTeacher();
@@ -38,6 +38,7 @@ public class Exam implements Serializable {
 
     public Exam(String notesForTeacher, String notesForStudent,
                 Teacher teacher, Course course, int duration, int maxGrade) {
+        this.id = (course.getId() * 100) + course.getEwxamId();
         this.notesForTeacher = notesForTeacher;
         this.notesForStudent = notesForStudent;
         this.teacher = teacher;
@@ -48,6 +49,10 @@ public class Exam implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNotesForTeacher() {

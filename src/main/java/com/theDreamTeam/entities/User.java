@@ -4,11 +4,10 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS) // all hierarchy classes are mapped to the same table
+@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     protected long id;
 
     protected String username;
@@ -34,6 +33,10 @@ public class User implements Serializable {
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getUsername() {

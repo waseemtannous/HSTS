@@ -1,8 +1,7 @@
 package com.theDreamTeam.client;
 
 import com.theDreamTeam.entities.*;
-
-import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -26,31 +25,25 @@ public class QuestionBoundary {
 
     public static QuestionController questionController = new QuestionController();
 
-    public static ExamBoundary examBoundary = new ExamBoundary();
-
-    public static ExamController examController = new ExamController();
-
     public static List<Question> selectedQuestions = new ArrayList<>();
 
     public static Course selectedCourse;
 
-    public void catchError() {
-
-    }
 
     public void getQuestionsForDrawer() {
         ScrollPane scrollPane = new ScrollPane();
         ProgressBar progressBar = new ProgressBar(-0.1f);
         scrollPane.setContent(progressBar);
         App.mainScreen.setCenter(scrollPane);
-        Message message = new Message(Message.getCoursesForQuestionsDrawer);
+        Message message = new Message(Query.getCoursesForQuestionsDrawer);
         App.client.sendMessageToServer(message);
     }
 
     public void receiveCoursesForQuestionsDrawer(List<Course> courses) {
         QuestionBoundary.courses = courses;
-        VBox vbox = new VBox(50);
-        selectorPane = new HBox();
+        VBox vbox = new VBox(20);
+        selectorPane = new HBox(20);
+        selectorPane.setPadding(new Insets(20, 0, 0, 0));
         pane = new ScrollPane();
         selectorPane.setAlignment(Pos.CENTER);
 
@@ -72,7 +65,7 @@ public class QuestionBoundary {
                     break;
                 }
             }
-            Message message = new Message(Message.getQuestionsDrawer, selectedCourse);
+            Message message = new Message(Query.getQuestionsDrawer, selectedCourse);
             App.client.sendMessageToServer(message);
         });
 
@@ -99,6 +92,7 @@ public class QuestionBoundary {
                 hbox.getChildren().add(editBtn);
             }
             vbox.getChildren().addAll(id, hbox);
+            vbox.setPadding(new Insets(0,50,0,50));
         }
         vbox.setAlignment(Pos.CENTER);
         pane.setContent(vbox);
@@ -146,6 +140,7 @@ public class QuestionBoundary {
         Text txt = new Text("");
 
         vbox.getChildren().addAll(saveBtn, title, ansA, ansB, ansC,ansD, txt);
+        vbox.setPadding(new Insets(0,50,0,50));
 
         saveBtn.setOnAction(e -> {
             if (checkInput(title.getText(), answerA.getText(), answerB.getText(), answerC.getText(), answerD.getText())) {
@@ -157,7 +152,8 @@ public class QuestionBoundary {
                         (String) group.getSelectedToggle().getUserData(), course);
 
                 questionController.saveQuestion(tempQuest);
-
+                Message message = new Message(Query.getQuestionsDrawer, selectedCourse);
+                App.client.sendMessageToServer(message);
             } else {
                 txt.setText("Invalid");
             }
@@ -165,7 +161,7 @@ public class QuestionBoundary {
         pane.setContent(vbox);
     }
 
-    public void editQuestion(Question question) {   // TODO: remove colors
+    public void editQuestion(Question question) {
         TextField title = new TextField(question.getTitle());
         title.setFont(new Font(20));
 
@@ -230,6 +226,7 @@ public class QuestionBoundary {
         VBox textVbox = new VBox();
         textVbox.getChildren().addAll(hbox, ansAHbox, ansBHbox, ansCHbox, ansDHbox);
         textVbox.setMaxSize(VBox.USE_PREF_SIZE, VBox.USE_PREF_SIZE);    // wrap content
+        textVbox.setPadding(new Insets(0,50,0,50));
 
         Text txt = new Text();
         txt.setFont(new Font(20));
@@ -249,6 +246,8 @@ public class QuestionBoundary {
                         (String) toggleGroup.getSelectedToggle().getUserData(), selectedCourse);
 
                 questionController.saveQuestion(tempQuest);
+                Message message = new Message(Query.getQuestionsDrawer, selectedCourse);
+                App.client.sendMessageToServer(message);
             } else {
                 txt.setText("Invalid");
             }
@@ -287,7 +286,7 @@ public class QuestionBoundary {
         text.setStyle("-fx-font-weight: bold");
     }
 
-    public VBox showQuestion(Question question) {   // TODO: remove colors
+    public VBox showQuestion(Question question) {
         String cssLayout = "-fx-border-color: black;";
         VBox vbox = new VBox();
         vbox.setMaxSize(VBox.USE_PREF_SIZE, VBox.USE_PREF_SIZE);    // wrap content
@@ -351,9 +350,7 @@ public class QuestionBoundary {
             CheckBox checkBox = new CheckBox();
 
             for (GradedQuestion gradedQuestion : ExamBoundary.editingRegularExam.getGradedQuestions()) {
-                System.out.println("pubg1");
                 if (gradedQuestion.getParentId() == question.getId()) {
-                    System.out.println("pubg2");
                     selectedQuestions.add(question);
                     checkBox.setSelected(true);
                 }
@@ -376,6 +373,7 @@ public class QuestionBoundary {
             });
 
             hbox.getChildren().addAll(checkBox, vbox);
+            hbox.setPadding(new Insets(0,10,0,10));
 
             mainVbox.getChildren().add(hbox);
         }
@@ -388,15 +386,6 @@ public class QuestionBoundary {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Select Questions");
         stage.show();
-    }
-
-    public boolean checkEqual(Question question, GradedQuestion gradedQuestion) {
-        boolean title = question.getTitle().equals(gradedQuestion.getTitle());
-        boolean ansA = question.getAnswerA().equals(gradedQuestion.getAnswerA());
-        boolean ansB = question.getAnswerB().equals(gradedQuestion.getAnswerB());
-        boolean ansC = question.getAnswerC().equals(gradedQuestion.getAnswerC());
-        boolean ansD = question.getAnswerD().equals(gradedQuestion.getAnswerD());
-        return (title && ansA && ansB && ansC && ansD);
     }
 
     public void setPointsForQuestion(Stage stage) {
@@ -416,6 +405,7 @@ public class QuestionBoundary {
             textFields.add(textField);
             HBox hbox = new HBox(20);
             hbox.getChildren().addAll(showQuestion(selectedQuestion), textField);
+            hbox.setPadding(new Insets(0,10,0,10));
             hBoxes.add(hbox);
         }
 
@@ -458,6 +448,8 @@ public class QuestionBoundary {
 
         VBox vbox = new VBox(10);
         vbox.getChildren().addAll(title, answerA, answerB, answerC, answerD, correctAns, points);
+        vbox.setPadding(new Insets(0,50,0,50));
+
         return vbox;
     }
 }

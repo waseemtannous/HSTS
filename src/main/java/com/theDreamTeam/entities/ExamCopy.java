@@ -34,6 +34,14 @@ public class ExamCopy implements Serializable {
 
     private boolean checked = false;
 
+    private long duration;
+
+    private int day;
+
+    private int month;
+
+    private int year;
+
     public ExamCopy() { }   // ctor for hibernate
 
     public ExamCopy(Student student, ExecutableExam executableExam, List<Answer> answers, boolean finished) {
@@ -59,8 +67,36 @@ public class ExamCopy implements Serializable {
     public Student getStudent() {
         return student;
     }
-	
-	public void setStudent(Student student) {
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public void setStudent(Student student) {
         this.student = student;
         student.getExams().add(this);
     }
@@ -122,6 +158,14 @@ public class ExamCopy implements Serializable {
     public boolean isChecked() {
         return checked;
     }
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
 
     public void setChecked(boolean checked) {
         this.checked = checked;
