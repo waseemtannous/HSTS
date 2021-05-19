@@ -8,7 +8,7 @@ Lecturer: Dr. Malki Grossman
 
 Teacher assistant: Mr. Liel Fridman
 
-### _Team Members:_
+## _Team Members:_
 
 > Waseem Tannous - Github: waseemtannous
 >
