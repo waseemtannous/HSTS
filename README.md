@@ -10,8 +10,8 @@ Teacher assistant: Mr. Liel Fridman
 
 ## _Team Members:_
 
-> Waseem Tannous - Github: waseemtannous
->
+> Waseem Tannous - Website: https://waseemtannous.com/
+> 
 > Saji Assi - Github: SajiAssi
 >
 > Farouq Krayem - Github: FarouqKrayem
